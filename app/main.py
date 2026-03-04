@@ -89,6 +89,7 @@ with st.sidebar:
         # Load data
         with st.spinner("Fetching data..."):
          df = get_prices(tickers, period, interval)
+        downloaded=True
 
         #st.rerun()
 
@@ -109,7 +110,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(["🗃️ Dataset","📊 Price Charts", "
 # TAB 1 — Price Charts (one per ticker)
 # ════════════════════════════════════════════════════════════════════════════════
 with tab1:
-    #if downloaded:
+    if downloaded:
         st.dataframe(
            df,
            #use_container_width=False,  # stretch to full width
