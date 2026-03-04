@@ -7,7 +7,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.services.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
 
-#test cambio git2
 # ── Data fetching ──────────────────────────────────────────────────────────────
 df=pd.DataFrame()
 @st.cache_resource(ttl=300)  # cache for 5 minutes
