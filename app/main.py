@@ -6,13 +6,14 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 #from core.services.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
-from pjs_qlab.data.YahooDataFetcher import YahooDataFetcher as price_fetcher
+from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
 import pjs_qlab.data.vacio
 
+#test cambio git2
 # ── Data fetching ──────────────────────────────────────────────────────────────
 df=pd.DataFrame()
 @st.cache_resource(ttl=300)  # cache for 5 minutes
-def get_prices(tickers: list, period, interval)-> pd.DataFrame:
+def get_prices(tickers: list, period='max', interval='1d')-> pd.DataFrame:
     y_obj= price_fetcher(tickers, period=period, interval=interval)
     return y_obj.get_close(adjusted=True,freq='d')
 
