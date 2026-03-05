@@ -13,7 +13,7 @@ import pjs_qlab.data.vacio
 # ── Data fetching ──────────────────────────────────────────────────────────────
 df=pd.DataFrame()
 @st.cache_resource(ttl=300)  # cache for 5 minutes
-def get_prices(tickers: list, period, interval)-> pd.DataFrame:
+def get_prices(tickers: list, period='max', interval='1d')-> pd.DataFrame:
     y_obj= price_fetcher(tickers, period=period, interval=interval)
     return y_obj.get_close(adjusted=True,freq='d')
 
@@ -84,6 +84,7 @@ with st.sidebar:
 
     st.divider()
     downloaded=False
+    period='max'
     if st.sidebar.button("Refresh Data", icon=":material/refresh:"):
         st.cache_resource.clear()
         st.toast("Cache cleared! Fetching fresh data...", icon="✅")
