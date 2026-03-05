@@ -1,5 +1,6 @@
 1- Install requirements:
 pip install -r requirements.txt
+pip install -e ../pjs_qlab
 
 
 2- to build and run from container
