@@ -6,7 +6,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 #from core.services.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
-from pjs_qlab.data.YahooDataFetcher import YahooDataFetcher as price_fetcher
+from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
 import pjs_qlab.data.vacio
 
 #test cambio git2
@@ -84,7 +84,6 @@ with st.sidebar:
 
     st.divider()
     downloaded=False
-    period='max'
     if st.sidebar.button("Refresh Data", icon=":material/refresh:"):
         st.cache_resource.clear()
         st.toast("Cache cleared! Fetching fresh data...", icon="✅")
