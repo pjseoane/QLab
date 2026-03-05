@@ -7,7 +7,7 @@ COPY requirements.txt .
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install -e ./pjs-qlab
+RUN pip install -e ../pjs_qlab
 
 EXPOSE 8501
 
