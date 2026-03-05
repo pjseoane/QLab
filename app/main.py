@@ -5,7 +5,9 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from core.services.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
+#from core.services.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
+from pjs_qlab.data.YahooDataFetcher import YahooDataFetcher as price_fetcher
+import pjs_qlab.data.vacio
 
 # ── Data fetching ──────────────────────────────────────────────────────────────
 df=pd.DataFrame()
