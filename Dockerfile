@@ -4,11 +4,11 @@ LABEL authors="pauli"
 WORKDIR /app
 
 COPY requirements.txt .
-COPY . .
-
+COPY external_libs/pjs_qlab-0.1.3-py3-none-any.whl .
+RUN pip install pjs_qlab-0.1.3-py3-none-any.whl
 RUN pip install --no-cache-dir -r requirements.txt
-#RUN pip install git+https://github.com/pjseoane/pjs_qlab.git
 
+COPY . .
 
 EXPOSE 8501
 
