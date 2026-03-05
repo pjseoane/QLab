@@ -7,7 +7,7 @@ COPY requirements.txt .
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install git+https://github.com/pjseoane/pjs_qlab.git
+#RUN pip install git+https://github.com/pjseoane/pjs_qlab.git
 
 
 EXPOSE 8501
