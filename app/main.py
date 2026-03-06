@@ -21,6 +21,10 @@ def get_cum_returns(prices:pd.DataFrame,freq='d'):
     q_obj= cQuant(prices)
     return q_obj.get_cum_returns(freq=freq)
 
+def get_pct_returns(prices:pd.DataFrame,freq='d'):
+    q_obj= cQuant(prices)
+    return q_obj.get_pct_returns(freq=freq)
+
 
 
 
@@ -118,7 +122,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(["🗃️ Dataset","📊 Price Charts", "
 # ════════════════════════════════════════════════════════════════════════════════
 with tab1:
     if downloaded:
-        col1, col2 = st.columns(2)
+        col1, col2,col3 = st.columns(3)
 
         with col1:
             st.subheader("Closes")
@@ -134,6 +138,16 @@ with tab1:
             st.subheader("Cum Returns")
             st.dataframe(
                 get_cum_returns(df,freq='d'),
+                width=400,  # stretch to full width
+                height=200,  # fixed height with scroll
+                hide_index=False,  # hide the index column
+                column_order=tickers,  # reorder columns shown
+
+            )
+        with col3:
+            st.subheader("% Returns")
+            st.dataframe(
+                get_pct_returns(df,freq='d'),
                 width=400,  # stretch to full width
                 height=200,  # fixed height with scroll
                 hide_index=False,  # hide the index column
