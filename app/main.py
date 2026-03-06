@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
-
+from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 
 #test cambio git2
 # ── Data fetching ──────────────────────────────────────────────────────────────
@@ -16,6 +16,11 @@ df=pd.DataFrame()
 def get_prices(tickers: list, period='max', interval='1d')-> pd.DataFrame:
     y_obj= price_fetcher(tickers, period=period, interval=interval)
     return y_obj.get_close(adjusted=True,freq='d')
+
+def get_cum_returns(prices:pd.DataFrame,freq='d'):
+    q_obj= cQuant(prices)
+    return q_obj.get_cum_returns(freq=freq)
+
 
 
 
@@ -113,17 +118,31 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(["🗃️ Dataset","📊 Price Charts", "
 # ════════════════════════════════════════════════════════════════════════════════
 with tab1:
     if downloaded:
-        st.dataframe(
-           df,
-           #use_container_width=False,  # stretch to full width
-           width=800,  # stretch to full width
-           height=400,  # fixed height with scroll
-           hide_index=False,  # hide the index column
-           column_order=tickers,  # reorder columns shown
-       )
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.subheader("Closes")
+            st.dataframe(
+                df,
+                #use_container_width=False,  # stretch to full width
+                width=400,  # stretch to full width
+                height=200,  # fixed height with scroll
+                hide_index=False,  # hide the index column
+                column_order=tickers,  # reorder columns shown
+            )
+        with col2:
+            st.subheader("Cum Returns")
+            st.dataframe(
+                get_cum_returns(df,freq='d'),
+                width=400,  # stretch to full width
+                height=200,  # fixed height with scroll
+                hide_index=False,  # hide the index column
+                column_order=tickers,  # reorder columns shown
+
+            )
 
 with tab2:
     selected = st.selectbox("Select ticker to view", tickers)
 
-#xxxxxxx
+
 
