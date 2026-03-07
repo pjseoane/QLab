@@ -100,7 +100,9 @@ with st.sidebar:
         # Load data
         with st.spinner("Fetching data..."):
             df = get_prices(tickers, period, interval)
-            #df.index = df.index.date
+            df1=df.copy(True)
+
+            df.index = df.index.date
 
         downloaded=True
 
@@ -129,6 +131,7 @@ with tab1:
         with col1:
             st.subheader("Closes")
 
+            #df1=df.copy(deep=True)
             st.dataframe(
                 df.style.format_index("{:%Y-%m-%d}"),
                 #use_container_width=False,  # stretch to full width
@@ -140,7 +143,7 @@ with tab1:
         with col2:
             st.subheader("Cumulative Returns")
 
-            cr=get_cum_returns(df,freq='d')
+            cr=get_cum_returns(df1,freq='d')
             cr.index=cr.index.date
 
             st.dataframe(
@@ -156,7 +159,7 @@ with tab1:
 
             st.subheader("% Returns")
 
-            pr = get_pct_returns(df,freq='d')
+            pr = get_pct_returns(df1,freq='d')
             pr.index=pr.index.date
 
             st.dataframe(
