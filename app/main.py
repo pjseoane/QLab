@@ -4,6 +4,9 @@ import sys
 import os
 from datetime import timedelta,datetime
 
+import plotly.express as px
+import plotly.graph_objects as go
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
@@ -47,7 +50,7 @@ st.caption("Powered by yfinance · Data from Yahoo Finance")
 
 # ── Sidebar controls ───────────────────────────────────────────────────────────
 with st.sidebar:
-    st.header("⚙️ Settings")
+    st.header("⚙️ Settings/New Layout")
 
     with st.expander("Tickers", icon=":material/playlist_add_check:",expanded=True):
         tickers_input = st.text_input(
@@ -75,6 +78,14 @@ with st.sidebar:
                          '1d', '5d', '1wk', '1mo', '3mo'], index=9,
                 help="Candle / data point size"
             )
+    with st.expander('Datasets', icon=":material/dataset:", expanded=False):
+        show_dataset = st.radio("Show Datasets",
+                                ['Closes',
+                                 'Cummulative Returns',
+                                 'Returns'])
+        #show_cumm_returns= st.checkbox("Cummulative Returns", value=True)
+        #show_returns= st.checkbox("Returns", value=True)
+
 
     with st.expander("Chart Settings", icon=":material/chart_data:", expanded=False):
         chart_type = st.radio("Type", ["Candlestick", "Line"])
@@ -130,70 +141,101 @@ with st.spinner("Fetching data..."):
 
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["🗃️ Dataset","📊 Price Charts", "⚖️ Comparison", "📋 Fundamentals", "🔥 Correlation"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["🗃️ Datasets","📊 Price Charts", "⚖️ Comparison", "📋 Fundamentals", "🔥 Correlation"])
 
 # ════════════════════════════════════════════════════════════════════════════════
 # TAB 1 — Price Charts (one per ticker)
 # ════════════════════════════════════════════════════════════════════════════════
 with tab1:
     #if downloaded:
-        col1, col2,col3 = st.columns(3)
+        col1, col2 = st.columns(2)
+
+        width = 400,  # stretch to full width
+        height = 400
 
         with col1:
-            st.subheader("Closes")
-            display_df = df.copy()
-            display_df.index = display_df.index.strftime("%Y-%m-%d")
+            if show_dataset=='Closes':
+                st.subheader("Closes")
+                format_y_axis_as_pct= False
+                display_df = df.copy()
+                display_df.index = display_df.index.strftime("%Y-%m-%d")
 
-            st.dataframe(
-                display_df,
+                st.dataframe(
+                    display_df,
 
+                    #use_container_width=False,  # stretch to full width
+                    #width=400,  # stretch to full width
+                    #height=200,  # fixed height with scroll
+                    hide_index=False,  # hide the index column
+                    column_order=tickers,  # reorder columns shown
+                )
+            elif show_dataset=='Cummulative Returns':
+                st.subheader("Cumulative Returns")
+                format_y_axis_as_pct= True
 
-                #use_container_width=False,  # stretch to full width
-                width=400,  # stretch to full width
-                height=200,  # fixed height with scroll
-                hide_index=False,  # hide the index column
-                column_order=tickers,  # reorder columns shown
+                display_df=get_cum_returns(df,freq='d')
+                display_df.index=display_df.index.date
+
+                st.dataframe(
+
+                    display_df.style
+                    .format("{:.2%}", subset=tickers)
+                    .background_gradient(subset=tickers, cmap="RdYlGn")
+                    .highlight_max(subset=tickers, color="lightgreen")
+                    .highlight_min(subset=tickers, color="salmon"),
+
+                    #width=400,  # stretch to full width
+                    #height=200,  # fixed height with scroll
+                    hide_index=False,  # hide the index column
+                    column_order=tickers,  # reorder columns shown
+
             )
+            elif show_dataset=='Returns':
+                st.subheader("% Returns")
+
+                format_y_axis_as_pct=True
+                display_df = get_pct_returns(df,freq='d')
+                display_df.index=display_df.index.date
+
+                st.dataframe(
+                    display_df.style
+                    .format("{:.2%}", subset=tickers)
+                    .background_gradient(subset=tickers, cmap="RdYlGn")
+                    .highlight_max(subset=tickers, color="lightgreen")
+                    .highlight_min(subset=tickers, color="salmon"),
+
+                    #width=400,  # stretch to full width
+                    #height=400,  # fixed height with scroll
+                    hide_index=False,  # hide the index column
+                    column_order=tickers,  # reorder columns shown
+
+                )
         with col2:
-            st.subheader("Cumulative Returns")
+            fig = go.Figure()
 
-            cr=get_cum_returns(df,freq='d')
-            cr.index=cr.index.date
+            for ticker in display_df:
+                fig.add_trace(go.Scatter(
+                x=display_df.index,
+                y=display_df[ticker],
+                name=ticker,
+                mode="lines"
+                ))
+            if format_y_axis_as_pct:
+                fig.update_yaxes(tickformat=".1%")
 
-            st.dataframe(
+            fig.update_xaxes(
+                    dtick="M1",  # one tick per month
+                    tickformat="%b '%y",  # Jan '24
+                    tickangle=-45,  # tilt to avoid overlap
+                    showgrid=True,
+                    gridcolor="rgba(255,255,255,0.1)",
+                    tickcolor="white",
+                    tickfont=dict(size=11),
+                )
 
-                cr.style
-                .format("{:.2%}", subset=tickers)
-                .background_gradient(subset=tickers, cmap="RdYlGn")
-                .highlight_max(subset=tickers, color="lightgreen")
-                .highlight_min(subset=tickers, color="salmon"),
+            #fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
+            st.plotly_chart(fig, use_container_width=True)
 
-                width=400,  # stretch to full width
-                height=200,  # fixed height with scroll
-                hide_index=False,  # hide the index column
-                column_order=tickers,  # reorder columns shown
-
-            )
-        with col3:
-
-            st.subheader("% Returns")
-
-            pr = get_pct_returns(df,freq='d')
-            pr.index=pr.index.date
-
-            st.dataframe(
-                pr.style
-                .format("{:.2%}", subset=tickers)
-                .background_gradient(subset=tickers, cmap="RdYlGn")
-                .highlight_max(subset=tickers, color="lightgreen")
-                .highlight_min(subset=tickers, color="salmon"),
-
-                width=400,  # stretch to full width
-                height=200,  # fixed height with scroll
-                hide_index=False,  # hide the index column
-                column_order=tickers,  # reorder columns shown
-
-            )
 
 
 
