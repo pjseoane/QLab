@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import sys
 import os
+from datetime import timedelta
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -12,9 +13,10 @@ from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 #test cambio git2
 # ── Data fetching ──────────────────────────────────────────────────────────────
 df=pd.DataFrame()
-@st.cache_resource(ttl=timedelta(minutes=5, max_entries=20,
-                                 show_spinner=True,
-                                 persist="disk"))
+@st.cache_resource(ttl=timedelta(minutes=5),
+                   max_entries=20,
+                   show_spinner=True,
+                   )
 # cache for 5 minutes
 def get_prices(tickers: list, period='max', interval='1d')-> pd.DataFrame:
     y_obj= price_fetcher(tickers, period=period, interval=interval)
@@ -103,9 +105,10 @@ with st.sidebar:
         # Load data
         with st.spinner("Fetching data..."):
             df = get_prices(tickers, period, interval)
-            df1=df.copy(True)
 
+            df1=df.copy(True)
             df.index = df.index.date
+
 
         downloaded=True
 
@@ -174,16 +177,6 @@ with tab1:
 
             )
 
-with tab2:
-    #selected = st.selectbox("Select ticker to view", tickers)
-    with st.sidebar:
-        st.header("⚙️ Otro Sidebar")
-
-        with st.expander(" Menu 2", icon=":material/playlist_add_check:", expanded=False):
-            pass
-        st.divider()
-        with st.expander("Menu 3", icon=":material/graph_5:", expanded=False):
-                menu3_components = st.checkbox("Menu 3 Components", value=True)
 
 
 
