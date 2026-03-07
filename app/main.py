@@ -81,7 +81,7 @@ with st.sidebar:
     with st.expander('Datasets', icon=":material/dataset:", expanded=False):
         show_dataset = st.radio("Show Datasets",
                                 ['Closes',
-                                 'Cummulative Returns',
+                                 'Cumulative Returns',
                                  'Returns'])
         #show_cumm_returns= st.checkbox("Cummulative Returns", value=True)
         #show_returns= st.checkbox("Returns", value=True)
@@ -164,8 +164,7 @@ with tab1:
                     display_df,
 
                     #use_container_width=False,  # stretch to full width
-                    #width=400,  # stretch to full width
-                    #height=200,  # fixed height with scroll
+
                     hide_index=False,  # hide the index column
                     column_order=tickers,  # reorder columns shown
                 )
@@ -184,8 +183,7 @@ with tab1:
                     .highlight_max(subset=tickers, color="lightgreen")
                     .highlight_min(subset=tickers, color="salmon"),
 
-                    #width=400,  # stretch to full width
-                    #height=200,  # fixed height with scroll
+
                     hide_index=False,  # hide the index column
                     column_order=tickers,  # reorder columns shown
 
@@ -204,8 +202,7 @@ with tab1:
                     .highlight_max(subset=tickers, color="lightgreen")
                     .highlight_min(subset=tickers, color="salmon"),
 
-                    #width=400,  # stretch to full width
-                    #height=400,  # fixed height with scroll
+
                     hide_index=False,  # hide the index column
                     column_order=tickers,  # reorder columns shown
 
