@@ -152,12 +152,13 @@ with tab1:
 
         width = 400,  # stretch to full width
         height = 300
+        display_df = df.copy()
 
         with col1:
             if show_dataset=='Closes':
                 st.subheader("Closes")
                 format_y_axis_as_pct= False
-                display_df = df.copy()
+
                 display_df.index = display_df.index.strftime("%Y-%m-%d")
 
                 st.dataframe(
@@ -168,7 +169,7 @@ with tab1:
                     hide_index=False,  # hide the index column
                     column_order=tickers,  # reorder columns shown
                 )
-            elif show_dataset=='Cummulative Returns':
+            elif show_dataset=='Cumulative Returns':
                 st.subheader("Cumulative Returns")
                 format_y_axis_as_pct= True
 
@@ -247,7 +248,7 @@ with tab1:
             fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
 
             #fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
 
 
 
