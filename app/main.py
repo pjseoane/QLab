@@ -49,7 +49,7 @@ st.caption("Powered by yfinance · Data from Yahoo Finance")
 with st.sidebar:
     st.header("⚙️ Settings")
 
-    with st.expander("Tickers", icon=":material/playlist_add_check:",expanded=True):
+    with st.expander("Tickers", icon=":material/playlist_add_check:",expanded=False):
         tickers_input = st.text_input(
             "Tickers (comma-separated)",
             value="AAPL, MSFT, GOOGL",
@@ -97,33 +97,31 @@ with st.sidebar:
         etf_components=st.checkbox("ETF Components", value=True)
 
     st.divider()
-    #downloaded=False
+    downloaded=False
     if st.sidebar.button("Refresh Data", icon=":material/refresh:"):
         st.cache_resource.clear()
         st.toast("Cache cleared! Fetching fresh data...", icon="✅")
 
         # Load data
-        #with st.spinner("Fetching data..."):
-         #   df = get_prices(tickers, period, interval)
+        with st.spinner("Fetching data..."):
+            df = get_prices(tickers, period, interval)
 
-        #    df1=df.copy(True)
-        #    df.index = df.index.date
+            df1=df.copy(True)
+            df.index = df.index.date
 
 
-        #downloaded=True
+        downloaded=True
 
-        st.rerun()
+        #st.rerun()
 
 
 
 # ── Load data for all tickers ──────────────────────────────────────────────────
-data: dict[str, pd.DataFrame] = {}
-errors: list[str] = []
+#data: dict[str, pd.DataFrame] = {}
+#errors: list[str] = []
 
-with st.spinner("Fetching data..."):
-   df = get_prices(tickers, period, interval)
-   #df1 = df.copy(True)
-   #df.index = df.index.date
+#with st.spinner("Fetching data..."):
+#   df = get_prices(tickers, period, interval)
 
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
@@ -133,16 +131,18 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(["🗃️ Dataset","📊 Price Charts", "
 # TAB 1 — Price Charts (one per ticker)
 # ════════════════════════════════════════════════════════════════════════════════
 with tab1:
-    #if downloaded:
+    if downloaded:
         col1, col2,col3 = st.columns(3)
 
         with col1:
             st.subheader("Closes")
 
+            #df1=df.copy(deep=True)
+            display_df = df.copy()
+            display_df.index = display_df.index.strftime("%Y-%m-%d")
+            #st.dataframe(display_df)
             st.dataframe(
-                df.style
-                .format_index("{:%Y-%m-%d}"),
-
+                display_df,
                 #use_container_width=False,  # stretch to full width
                 width=400,  # stretch to full width
                 height=200,  # fixed height with scroll
@@ -152,17 +152,12 @@ with tab1:
         with col2:
             st.subheader("Cumulative Returns")
 
-            cr=get_cum_returns(df,freq='d')
+            cr=get_cum_returns(df1,freq='d')
             cr.index=cr.index.date
 
             st.dataframe(
 
-                cr.style
-                .format("{:.2%}", subset=tickers)
-                .background_gradient(subset=tickers, cmap="RdYlGn")
-                .highlight_max(subset=tickers, color="lightgreen")
-                .highlight_min(subset=tickers, color="salmon"),
-
+                cr.style.format("{:.2%}", subset=tickers),
                 width=400,  # stretch to full width
                 height=200,  # fixed height with scroll
                 hide_index=False,  # hide the index column
@@ -173,16 +168,11 @@ with tab1:
 
             st.subheader("% Returns")
 
-            pr = get_pct_returns(df,freq='d')
+            pr = get_pct_returns(df1,freq='d')
             pr.index=pr.index.date
 
             st.dataframe(
-                pr.style
-                .format("{:.2%}", subset=tickers)
-                .background_gradient(subset=tickers, cmap="RdYlGn")
-                .highlight_max(subset=tickers, color="lightgreen")
-                .highlight_min(subset=tickers, color="salmon"),
-
+                pr.style.format("{:.2%}", subset=tickers),
                 width=400,  # stretch to full width
                 height=200,  # fixed height with scroll
                 hide_index=False,  # hide the index column
