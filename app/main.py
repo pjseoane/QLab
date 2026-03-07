@@ -12,7 +12,10 @@ from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 #test cambio git2
 # ── Data fetching ──────────────────────────────────────────────────────────────
 df=pd.DataFrame()
-@st.cache_resource(ttl=300)  # cache for 5 minutes
+@st.cache_resource(ttl=timedelta(minutes=5, max_entries=20,
+                                 show_spinner=True,
+                                 persist="disk"))
+# cache for 5 minutes
 def get_prices(tickers: list, period='max', interval='1d')-> pd.DataFrame:
     y_obj= price_fetcher(tickers, period=period, interval=interval)
     return y_obj.get_close(adjusted=True,freq='d')
@@ -172,7 +175,16 @@ with tab1:
             )
 
 with tab2:
-    selected = st.selectbox("Select ticker to view", tickers)
+    #selected = st.selectbox("Select ticker to view", tickers)
+    with st.sidebar:
+        st.header("⚙️ Otro Sidebar")
+
+        with st.expander(" Menu 2", icon=":material/playlist_add_check:", expanded=False):
+            pass
+        st.divider()
+        with st.expander("Menu 3", icon=":material/graph_5:", expanded=False):
+                menu3_components = st.checkbox("Menu 3 Components", value=True)
+
 
 
 
