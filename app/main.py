@@ -151,7 +151,7 @@ with tab1:
         col1, col2 = st.columns(2)
 
         width = 400,  # stretch to full width
-        height = 400
+        height = 300
 
         with col1:
             if show_dataset=='Closes':
@@ -232,6 +232,22 @@ with tab1:
                     tickcolor="white",
                     tickfont=dict(size=11),
                 )
+
+            end_date = df.index[-1]  # last row index value
+            start_date = df.index[0]
+
+            delta_days = (end_date - start_date).days
+
+            if delta_days <= 90:
+                dtick, fmt = "M1", "%d %b"  # short range → daily/weekly labels
+            elif delta_days <= 365:
+                dtick, fmt = "M1", "%b '%y"  # 1 year → monthly
+            elif delta_days <= 365 * 3:
+                dtick, fmt = "M3", "%b '%y"  # 3 years → quarterly
+            else:
+                dtick, fmt = "M12", "%Y"  # long range → yearly
+
+            fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
 
             #fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
             st.plotly_chart(fig, use_container_width=True)
