@@ -3,16 +3,17 @@ import streamlit as st
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+#sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
-from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
+#from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
+#from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 
 #test cambio git2
 # ── Data fetching ──────────────────────────────────────────────────────────────
-df=pd.DataFrame()
-@st.cache_resource(ttl=300)  # cache for 5 minutes
+#df=pd.DataFrame()
+#@st.cache_resource(ttl=300)  # cache for 5 minutes
+"""
 def get_prices(tickers: list, period='max', interval='1d')-> pd.DataFrame:
     y_obj= price_fetcher(tickers, period=period, interval=interval)
     return y_obj.get_close(adjusted=True,freq='d')
@@ -24,7 +25,7 @@ def get_cum_returns(prices:pd.DataFrame,freq='d'):
 def get_pct_returns(prices:pd.DataFrame,freq='d'):
     q_obj= cQuant(prices)
     return q_obj.get_pct_returns(freq=freq)
-
+"""
 
 
 
@@ -92,7 +93,7 @@ with st.sidebar:
         etf_components=st.checkbox("ETF Components", value=True)
 
     st.divider()
-    downloaded=False
+    #downloaded=False
     if st.sidebar.button("Refresh Data", icon=":material/refresh:"):
         st.cache_resource.clear()
         st.toast("Cache cleared! Fetching fresh data...", icon="✅")
@@ -104,9 +105,9 @@ with st.sidebar:
 
             df.index = df.index.date
 
-        downloaded=True
+        #downloaded=True
 
-        #st.rerun()
+        st.rerun()
 
 
 
@@ -131,7 +132,7 @@ with tab1:
         with col1:
             st.subheader("Closes")
 
-            #df1=df.copy(deep=True)
+            """
             st.dataframe(
                 df.style.format_index("{:%Y-%m-%d}"),
                 #use_container_width=False,  # stretch to full width
@@ -140,10 +141,12 @@ with tab1:
                 hide_index=False,  # hide the index column
                 column_order=tickers,  # reorder columns shown
             )
+            """
         with col2:
             st.subheader("Cumulative Returns")
 
-            cr=get_cum_returns(df1,freq='d')
+            """
+            r=get_cum_returns(df1,freq='d')
             cr.index=cr.index.date
 
             st.dataframe(
@@ -155,10 +158,12 @@ with tab1:
                 column_order=tickers,  # reorder columns shown
 
             )
+            """
         with col3:
 
             st.subheader("% Returns")
 
+            """
             pr = get_pct_returns(df1,freq='d')
             pr.index=pr.index.date
 
@@ -170,7 +175,7 @@ with tab1:
                 column_order=tickers,  # reorder columns shown
 
             )
-
+            """
 with tab2:
     selected = st.selectbox("Select ticker to view", tickers)
 
