@@ -97,31 +97,31 @@ with st.sidebar:
         etf_components=st.checkbox("ETF Components", value=True)
 
     st.divider()
-    downloaded=False
+    #downloaded=False
     if st.sidebar.button("Refresh Data", icon=":material/refresh:"):
         st.cache_resource.clear()
         st.toast("Cache cleared! Fetching fresh data...", icon="✅")
 
         # Load data
-        with st.spinner("Fetching data..."):
-            df = get_prices(tickers, period, interval)
+        #with st.spinner("Fetching data..."):
+         #   df = get_prices(tickers, period, interval)
 
-            df1=df.copy(True)
-            df.index = df.index.date
+        #    df1=df.copy(True)
+        #    df.index = df.index.date
 
 
-        downloaded=True
+        #downloaded=True
 
-        #st.rerun()
+        st.rerun()
 
 
 
 # ── Load data for all tickers ──────────────────────────────────────────────────
-#data: dict[str, pd.DataFrame] = {}
-#errors: list[str] = []
+data: dict[str, pd.DataFrame] = {}
+errors: list[str] = []
 
-#with st.spinner("Fetching data..."):
-#   df = get_prices(tickers, period, interval)
+with st.spinner("Fetching data..."):
+   df = get_prices(tickers, period, interval)
 
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
