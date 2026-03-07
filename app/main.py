@@ -13,19 +13,7 @@ import os
 # ── Data fetching ──────────────────────────────────────────────────────────────
 #df=pd.DataFrame()
 #@st.cache_resource(ttl=300)  # cache for 5 minutes
-"""
-def get_prices(tickers: list, period='max', interval='1d')-> pd.DataFrame:
-    y_obj= price_fetcher(tickers, period=period, interval=interval)
-    return y_obj.get_close(adjusted=True,freq='d')
 
-def get_cum_returns(prices:pd.DataFrame,freq='d'):
-    q_obj= cQuant(prices)
-    return q_obj.get_cum_returns(freq=freq)
-
-def get_pct_returns(prices:pd.DataFrame,freq='d'):
-    q_obj= cQuant(prices)
-    return q_obj.get_pct_returns(freq=freq)
-"""
 
 
 
@@ -36,7 +24,7 @@ st.set_page_config(
     layout="wide",
 )
 
-st.title("📈 Investment Ideas Quant Lab")
+st.title("📈 Skeleton-")
 st.caption("Powered by yfinance · Data from Yahoo Finance")
 
 
@@ -126,56 +114,20 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(["🗃️ Dataset","📊 Price Charts", "
 # TAB 1 — Price Charts (one per ticker)
 # ════════════════════════════════════════════════════════════════════════════════
 with tab1:
-    if downloaded:
+    #if downloaded:
         col1, col2,col3 = st.columns(3)
 
         with col1:
             st.subheader("Closes")
 
-            """
-            st.dataframe(
-                df.style.format_index("{:%Y-%m-%d}"),
-                #use_container_width=False,  # stretch to full width
-                width=400,  # stretch to full width
-                height=200,  # fixed height with scroll
-                hide_index=False,  # hide the index column
-                column_order=tickers,  # reorder columns shown
-            )
-            """
+
         with col2:
             st.subheader("Cumulative Returns")
 
-            """
-            r=get_cum_returns(df1,freq='d')
-            cr.index=cr.index.date
-
-            st.dataframe(
-
-                cr.style.format("{:.2%}", subset=tickers),
-                width=400,  # stretch to full width
-                height=200,  # fixed height with scroll
-                hide_index=False,  # hide the index column
-                column_order=tickers,  # reorder columns shown
-
-            )
-            """
         with col3:
 
             st.subheader("% Returns")
 
-            """
-            pr = get_pct_returns(df1,freq='d')
-            pr.index=pr.index.date
-
-            st.dataframe(
-                pr.style.format("{:.2%}", subset=tickers),
-                width=400,  # stretch to full width
-                height=200,  # fixed height with scroll
-                hide_index=False,  # hide the index column
-                column_order=tickers,  # reorder columns shown
-
-            )
-            """
 with tab2:
     selected = st.selectbox("Select ticker to view", tickers)
 
