@@ -138,10 +138,12 @@ with tab1:
 
         with col1:
             st.subheader("Closes")
+            display_df = df.copy()
+            display_df.index = display_df.index.strftime("%Y-%m-%d")
 
             st.dataframe(
-                df.style
-                .format_index("{:%Y-%m-%d}"),
+                display_df,
+
 
                 #use_container_width=False,  # stretch to full width
                 width=400,  # stretch to full width
