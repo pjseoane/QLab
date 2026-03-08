@@ -40,6 +40,12 @@ def get_log_returns(freq='d'):
 def get_rebase(freq='d'):
     return q_obj.get_rebase(freq=freq)
 
+def get_largest_pct_drop(days=30):
+    return q_obj.get_largest_pct_drop(days=days)
+
+def get_largest_pct_rise(days=30):
+    return q_obj.get_largest_pct_rise(days=days)
+
 
 
 
@@ -167,8 +173,8 @@ with st.spinner("Fetching data..."):
 
 def function_executor(func, parameters,tickers,title='title' ):
     st.subheader(title)
-    output_df=func('1d')
-    #output_df.index = output_df.index.date
+    output_df=func(parameters)
+    output_df.index = output_df.index.date
     st.dataframe(
 
         output_df.style
@@ -197,12 +203,11 @@ with tab1:
         width = 400,  # stretch to full width
         height = 300
         display_df = closes.copy()
+        format_y_axis_as_pct = False
 
         with col1:
             if show_dataset=='Closes':
                 format_y_axis_as_pct = False
-
-                #display_df = function_executor(get_closes, 'd', tickers, title='Closes 2')
 
                 st.subheader("Closes")
                 display_df.index = display_df.index.strftime("%Y-%m-%d")
@@ -223,7 +228,6 @@ with tab1:
                 format_y_axis_as_pct = True
                 display_df = function_executor(get_pct_returns, 'd', tickers, title='% Returns')
 
-
             elif show_dataset=='Log Returns':
 
                 format_y_axis_as_pct = True
@@ -234,7 +238,15 @@ with tab1:
                 format_y_axis_as_pct = True
                 display_df = function_executor(get_rebase, 'd', tickers, title='Rebase')
 
+            elif show_dataset=='Largest pct drop':
+                format_y_axis_as_pct = True
+                days=30
+                display_df = function_executor(get_largest_pct_drop, days, tickers, title='Largest % drop')
 
+            elif show_dataset=='Largest pct rise':
+                format_y_axis_as_pct = True
+                days=30
+                display_df = function_executor(get_largest_pct_rise, days, tickers, title='Largest % rise')
 
 
         with col2:
