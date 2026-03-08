@@ -15,27 +15,30 @@ from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 
 #test cambio git2
 # ── Data fetching ──────────────────────────────────────────────────────────────
-df=pd.DataFrame()
+#df=pd.DataFrame()
 @st.cache_resource(ttl=timedelta(minutes=5),
                    max_entries=20,
                    show_spinner=True,
                    )
 # cache for 5 minutes
-def get_prices(tickers: list, period='max', interval='1d')-> pd.DataFrame:
-    y_obj= price_fetcher(tickers, period=period, interval=interval)
-    return y_obj.get_close(adjusted=True,freq='d')
+#def get_prices(tickers: list, period='max', interval='1d')-> pd.DataFrame:
+#    y_obj= price_fetcher(tickers, period=period, interval=interval)
+#    return y_obj.get_close(adjusted=True,freq='d')
 
-def get_cum_returns(prices:pd.DataFrame,freq='d'):
-    q_obj= cQuant(prices)
+def get_closes(adjusted=True, freq='d'):
+    return y_obj.get_close(adjusted=adjusted, freq=freq)
+
+def get_cum_returns(freq='d'):
     return q_obj.get_cum_returns(freq=freq)
 
-def get_pct_returns(prices:pd.DataFrame,freq='d'):
-    q_obj= cQuant(prices)
+def get_pct_returns(freq='d'):
     return q_obj.get_pct_returns(freq=freq)
 
-def get_log_returns(prices:pd.DataFrame,freq='d'):
-    q_obj= cQuant(prices)
+def get_log_returns(freq='d'):
     return q_obj.get_log_returns(freq=freq)
+
+def get_mean_returns(freq='d'):
+    return q_obj.get_mean_returns(freq=freq)
 
 
 
@@ -156,9 +159,31 @@ data: dict[str, pd.DataFrame] = {}
 errors: list[str] = []
 
 with st.spinner("Fetching data..."):
-   df = get_prices(tickers, period, interval)
+    y_obj = price_fetcher(tickers, period=period, interval=interval)
+    closes=y_obj.get_close(adjusted=True,freq='d')
+    q_obj= cQuant(closes)
+
+    #df = get_prices(tickers, period, interval)
    #df1 = df.copy(True)
    #df.index = df.index.date
+
+def function_executor(func, parameters,tickers,title='title' ):
+    st.subheader(title)
+    output_df=func('1d')
+    #output_df.index = output_df.index.date
+    st.dataframe(
+
+        output_df.style
+        .format("{:.2%}", subset=tickers)
+        .background_gradient(subset=tickers, cmap="RdYlGn")
+        .highlight_max(subset=tickers, color="lightgreen")
+        .highlight_min(subset=tickers, color="salmon"),
+
+        hide_index=False,  # hide the index column
+        column_order=tickers,  # reorder columns shown
+
+    )
+    return output_df
 
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
@@ -173,83 +198,43 @@ with tab1:
 
         width = 400,  # stretch to full width
         height = 300
-        display_df = df.copy()
+        display_df = closes.copy()
 
         with col1:
             if show_dataset=='Closes':
-                st.subheader("Closes")
-                format_y_axis_as_pct= False
+                format_y_axis_as_pct = False
 
+                #display_df = function_executor(get_closes, 'd', tickers, title='Closes 2')
+
+                st.subheader("Closes")
                 display_df.index = display_df.index.strftime("%Y-%m-%d")
 
                 st.dataframe(
-                    display_df,
-
-                    #use_container_width=False,  # stretch to full width
+                   display_df,
 
                     hide_index=False,  # hide the index column
                     column_order=tickers,  # reorder columns shown
                 )
             elif show_dataset=='Cumulative Returns':
-                st.subheader("Cumulative Returns")
-                format_y_axis_as_pct= True
-
-                display_df=get_cum_returns(df,freq='d')
-                display_df.index=display_df.index.date
-
-                st.dataframe(
-
-                    display_df.style
-                    .format("{:.2%}", subset=tickers)
-                    .background_gradient(subset=tickers, cmap="RdYlGn")
-                    .highlight_max(subset=tickers, color="lightgreen")
-                    .highlight_min(subset=tickers, color="salmon"),
-
-
-                    hide_index=False,  # hide the index column
-                    column_order=tickers,  # reorder columns shown
-
-            )
-            elif show_dataset=='Returns':
-                st.subheader("% Returns")
-
-                format_y_axis_as_pct=True
-                display_df = get_pct_returns(df,freq='d')
-                display_df.index=display_df.index.date
-
-                st.dataframe(
-                    display_df.style
-                    .format("{:.2%}", subset=tickers)
-                    .background_gradient(subset=tickers, cmap="RdYlGn")
-                    .highlight_max(subset=tickers, color="lightgreen")
-                    .highlight_min(subset=tickers, color="salmon"),
-
-
-                    hide_index=False,  # hide the index column
-                    column_order=tickers,  # reorder columns shown
-
-                )
-            elif show_dataset=='Log Returns':
-                st.subheader("Log Returns")
 
                 format_y_axis_as_pct = True
-                display_df = get_log_returns(df, freq='d')
-                display_df.index = display_df.index.date
+                display_df = function_executor(get_cum_returns, 'd', tickers, title='Cumulative Returns')
 
-                st.dataframe(
-                    display_df.style
-                    .format("{:.2%}", subset=tickers)
-                    .background_gradient(subset=tickers, cmap="RdYlGn")
-                    .highlight_max(subset=tickers, color="lightgreen")
-                    .highlight_min(subset=tickers, color="salmon"),
+            elif show_dataset=='Returns':
 
-                    hide_index=False,  # hide the index column
-                    column_order=tickers,  # reorder columns shown
-
-                )
+                format_y_axis_as_pct = True
+                display_df = function_executor(get_pct_returns, 'd', tickers, title='% Returns')
 
 
+            elif show_dataset=='Log Returns':
 
+                format_y_axis_as_pct = True
+                display_df = function_executor(get_log_returns, 'd', tickers, title='Log Returns')
+
+            elif show_dataset=='Mean Returns':
+
+                format_y_axis_as_pct = True
+                display_df=function_executor(get_pct_returns, 'd', tickers, title='Returns')
 
 
         with col2:
@@ -275,8 +260,8 @@ with tab1:
                     tickfont=dict(size=11),
                 )
 
-            end_date = df.index[-1]  # last row index value
-            start_date = df.index[0]
+            end_date = closes.index[-1]  # last row index value
+            start_date = closes.index[0]
 
             delta_days = (end_date - start_date).days
 
