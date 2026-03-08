@@ -37,8 +37,8 @@ def get_pct_returns(freq='d'):
 def get_log_returns(freq='d'):
     return q_obj.get_log_returns(freq=freq)
 
-def get_mean_returns(freq='d'):
-    return q_obj.get_mean_returns(freq=freq)
+def get_rebase(freq='d'):
+    return q_obj.get_rebase(freq=freq)
 
 
 
@@ -91,8 +91,6 @@ with st.sidebar:
                                 'Returns',
                                  'Cumulative Returns',
                                  'Log Returns',
-                                 'Mean Returns',
-                                 'Std Returns',
                                  'Rebase',
                                  'Largest pct drop',
                                  'Largest pct rise',
@@ -231,10 +229,12 @@ with tab1:
                 format_y_axis_as_pct = True
                 display_df = function_executor(get_log_returns, 'd', tickers, title='Log Returns')
 
-            elif show_dataset=='Mean Returns':
+            elif show_dataset=='Rebase':
 
                 format_y_axis_as_pct = True
-                display_df=function_executor(get_pct_returns, 'd', tickers, title='Returns')
+                display_df = function_executor(get_rebase, 'd', tickers, title='Rebase')
+
+
 
 
         with col2:
