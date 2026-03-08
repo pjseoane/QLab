@@ -33,6 +33,10 @@ def get_pct_returns(prices:pd.DataFrame,freq='d'):
     q_obj= cQuant(prices)
     return q_obj.get_pct_returns(freq=freq)
 
+def get_log_returns(prices:pd.DataFrame,freq='d'):
+    q_obj= cQuant(prices)
+    return q_obj.get_log_returns(freq=freq)
+
 
 
 
@@ -81,8 +85,16 @@ with st.sidebar:
     with st.expander('Datasets', icon=":material/dataset:", expanded=False):
         show_dataset = st.radio("Show Datasets",
                                 ['Closes',
+                                'Returns',
                                  'Cumulative Returns',
-                                 'Returns'])
+                                 'Log Returns',
+                                 'Mean Returns',
+                                 'Std Returns',
+                                 'Rebase',
+                                 'Largest pct drop',
+                                 'Largest pct rise',
+
+                                 ])
         #show_cumm_returns= st.checkbox("Cummulative Returns", value=True)
         #show_returns= st.checkbox("Returns", value=True)
 
@@ -91,6 +103,15 @@ with st.sidebar:
         chart_type = st.radio("Type", ["Candlestick", "Line"])
         show_ma = st.checkbox("Moving Averages", value=True)
         show_rsi = st.checkbox("RSI", value=True)
+
+    with st.expander("Volatility", icon=":material/browse_activity:", expanded=False):
+        chart_type = st.radio("Type", [
+                                 'Annualized Volatility',
+                                 'Daily Volatility',
+                                 'Historical Vlt Series',])
+        #show_ma = st.checkbox("Moving Averages", value=True)
+        #show_rsi = st.checkbox("RSI", value=True)
+
 
     with st.expander("️Calculate", icon=":material/calculate:",expanded=False):
         normalize = st.checkbox("Normalize to 100", value=True)
@@ -208,6 +229,29 @@ with tab1:
                     column_order=tickers,  # reorder columns shown
 
                 )
+            elif show_dataset=='Log Returns':
+                st.subheader("Log Returns")
+
+                format_y_axis_as_pct = True
+                display_df = get_log_returns(df, freq='d')
+                display_df.index = display_df.index.date
+
+                st.dataframe(
+                    display_df.style
+                    .format("{:.2%}", subset=tickers)
+                    .background_gradient(subset=tickers, cmap="RdYlGn")
+                    .highlight_max(subset=tickers, color="lightgreen")
+                    .highlight_min(subset=tickers, color="salmon"),
+
+                    hide_index=False,  # hide the index column
+                    column_order=tickers,  # reorder columns shown
+
+                )
+
+
+
+
+
         with col2:
             fig = go.Figure()
 
