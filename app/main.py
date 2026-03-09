@@ -231,39 +231,40 @@ with tab1: #Datasets
             elif show_dataset=='Cumulative Returns':
 
                 format_y_axis_as_pct = True
-                display_df = function_executor(get_cum_returns, 'd', tickers, title='Cumulative Returns')
+                display_df = function_executor(get_cum_returns, 'd', tickers, title=show_dataset)
 
             elif show_dataset=='Returns':
 
                 format_y_axis_as_pct = True
-                display_df = function_executor(get_pct_returns, 'd', tickers, title='% Returns')
+                display_df = function_executor(get_pct_returns, 'd', tickers, title=show_dataset)
 
             elif show_dataset=='Log Returns':
 
                 format_y_axis_as_pct = True
-                display_df = function_executor(get_log_returns, 'd', tickers, title='Log Returns')
+                display_df = function_executor(get_log_returns, 'd', tickers, title=show_dataset)
 
             elif show_dataset=='Rebase':
                 format_y_axis_as_pct = True
-                display_df = function_executor(get_rebase, 'd', tickers, title='Rebase')
+                display_df = function_executor(get_rebase, 'd', tickers, title=show_dataset)
 
             elif show_dataset == 'Largest pct drop':
                 format_y_axis_as_pct = True
                 days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-                display_df = function_executor(get_largest_pct_drop, days,tickers,   title='Largest % drop')
+                display_df = function_executor(get_largest_pct_drop, days,tickers,   title=show_dataset)
 
             elif show_dataset == 'Largest pct rise':
                 format_y_axis_as_pct = True
                 days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-                display_df = function_executor(get_largest_pct_rise, days,tickers,   title='Largest % rise')
+                display_df = function_executor(get_largest_pct_rise, days,tickers,   title=show_dataset)
 
             elif show_dataset == 'Historic Volatility':
+                title='Historic Volatility'
                 format_y_axis_as_pct = True,
 
                 days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
 
 
-                display_df = function_executor(get_hist_vlt_series, days,tickers,   title='Historic Volatility')
+                display_df = function_executor(get_hist_vlt_series, days,tickers, title=show_dataset)
 
 
         with col2: # Chart
@@ -278,6 +279,16 @@ with tab1: #Datasets
                 ))
             if format_y_axis_as_pct:
                 fig.update_yaxes(tickformat=".1%")
+
+            fig.update_layout(
+                title=dict(
+                    text=show_dataset,
+                    font=dict(size=20, color="white"),
+                    x=0.5,  # centered (0=left, 0.5=center, 1=right)
+                    xanchor="center",
+                    y=0.95,  # vertical position
+                )
+            )
 
             fig.update_xaxes(
                     dtick="M1",  # one tick per month
