@@ -255,7 +255,7 @@ with tab1: #Datasets
             elif show_dataset == 'Largest pct rise':
                 format_y_axis_as_pct = True
                 days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-                display_df = function_executor(get_largest_pct_rise, days,tickers,   title='Largest % drop')
+                display_df = function_executor(get_largest_pct_rise, days,tickers,   title='Largest % rise')
 
             elif show_dataset == 'Historic Volatility':
                 format_y_axis_as_pct = True,
@@ -263,7 +263,7 @@ with tab1: #Datasets
                 days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
 
 
-                display_df = function_executor(get_hist_vlt_series, days,tickers,   title='Largest % drop')
+                display_df = function_executor(get_hist_vlt_series, days,tickers,   title='Historic Volatility')
 
 
 
