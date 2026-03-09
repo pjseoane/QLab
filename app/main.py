@@ -46,7 +46,23 @@ def get_largest_pct_rise(days=30):
 def get_hist_vlt_series(days=30):
     return q_obj.get_hist_vlt_series(days=days)
 
+def function_executor(func, parameters,tickers,title='title' ):
+    st.subheader(title)
+    output_df=func(parameters)
+    output_df.index = output_df.index.date
+    st.dataframe(
 
+        output_df.style
+        .format("{:.2%}", subset=tickers)
+        .background_gradient(subset=tickers, cmap="RdYlGn")
+        .highlight_max(subset=tickers, color="lightgreen")
+        .highlight_min(subset=tickers, color="salmon"),
+
+        hide_index=False,  # hide the index column
+        column_order=tickers,  # reorder columns shown
+
+    )
+    return output_df
 
 
 # ── Page config ────────────────────────────────────────────────────────────────
@@ -91,7 +107,7 @@ with st.sidebar:
                          '1d', '5d', '1wk', '1mo', '3mo'], index=9,
                 help="Candle / data point size"
             )
-    with st.expander('Returns', icon=":material/dataset:", expanded=False):
+    with st.expander('Datasets', icon=":material/dataset:", expanded=False):
 
             show_dataset = st.radio("Show Datasets",
                                     ['Closes',
@@ -99,30 +115,19 @@ with st.sidebar:
                                      'Cumulative Returns',
                                      'Log Returns',
                                      'Rebase',
+                                     'Largest pct drop',
+                                     'Largest pct rise',
+                                     'Historic Volatility',
+                                     'Daily Volatility',
+
                                      ])
 
-
-    with st.expander("Price Action", icon=":material/browse_activity:", expanded=False):
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            show_price_action = st.radio("Type", [
-                                    'Largest pct drop',
-                                    'Largest pct rise',
-                                 'Historic Volatility',
-                                 'Daily Volatility', ])
-
-        with col2:
-            days = st.number_input('days', min_value=1, max_value=500, value=20, step=1)
 
 
     with st.expander("Chart Settings", icon=":material/chart_data:", expanded=False):
         chart_type = st.radio("Type", ["Candlestick", "Line"])
         show_ma = st.checkbox("Moving Averages", value=True)
         show_rsi = st.checkbox("RSI", value=True)
-
-
-
-
 
     with st.expander("️Calculate", icon=":material/calculate:",expanded=False):
         normalize = st.checkbox("Normalize to 100", value=True)
@@ -175,37 +180,21 @@ with st.spinner("Fetching data..."):
    #df1 = df.copy(True)
    #df.index = df.index.date
 
-def function_executor(func, parameters,tickers,title='title' ):
-    st.subheader(title)
-    output_df=func(parameters)
-    output_df.index = output_df.index.date
-    st.dataframe(
-
-        output_df.style
-        .format("{:.2%}", subset=tickers)
-        .background_gradient(subset=tickers, cmap="RdYlGn")
-        .highlight_max(subset=tickers, color="lightgreen")
-        .highlight_min(subset=tickers, color="salmon"),
-
-        hide_index=False,  # hide the index column
-        column_order=tickers,  # reorder columns shown
-
-    )
-    return output_df
 
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["🗃️ Datasets","📊 Price Action","📊 Price Charts", "⚖️ Comparison", "📋 Fundamentals", "🔥 Correlation"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["🗃️ Datasets","📊 Price Charts", "⚖️ Comparison", "📋 Fundamentals", "🔥 Correlation"])
 
 # ════════════════════════════════════════════════════════════════════════════════
 # TAB 1 — Price Charts (one per ticker)
 # ════════════════════════════════════════════════════════════════════════════════
-with tab1: #Closes & Returns
+with tab1: #Datasets
     #if downloaded:
         col1, col2 = st.columns([1,3])
 
         width = 400,  # stretch to full width
         height = 300
+
         display_df = closes.copy()
         format_y_axis_as_pct = False
 
@@ -238,12 +227,28 @@ with tab1: #Closes & Returns
                 display_df = function_executor(get_log_returns, 'd', tickers, title='Log Returns')
 
             elif show_dataset=='Rebase':
-
                 format_y_axis_as_pct = True
                 display_df = function_executor(get_rebase, 'd', tickers, title='Rebase')
 
+            elif show_dataset == 'Largest pct drop':
+                format_y_axis_as_pct = True
+                days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
+                display_df = function_executor(get_largest_pct_drop, days,tickers,   title='Largest % drop')
 
-        with col2:
+            elif show_dataset == 'Largest pct rise':
+                format_y_axis_as_pct = True
+                days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
+                display_df = function_executor(get_largest_pct_rise, days,tickers,   title='Largest % drop')
+
+            elif show_dataset == 'Historic Volatility':
+                format_y_axis_as_pct = True,
+                days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
+                display_df = function_executor(get_hist_vlt_series, days,tickers,   title='Largest % drop')
+
+
+
+
+        with col2: # Chart
             fig = go.Figure()
 
             for ticker in display_df:
@@ -285,73 +290,8 @@ with tab1: #Closes & Returns
             #fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
             st.plotly_chart(fig, width='stretch')
 
-with tab2: # Price Action
 
-    col1, col2 = st.columns([1,3])
 
-    width = 400,  # stretch to full width
-    height = 300
-    display_df = closes.copy()
-    format_y_axis_as_pct = True
 
-    with col1:
-        if show_price_action == 'Largest pct drop':
-            format_y_axis_as_pct = True
-            #days = st.number_input('days', min_value=1, max_value=500, value=20, step=1)
-
-            display_df = function_executor(get_largest_pct_drop, days, tickers, title='Largest % drop')
-
-        elif show_price_action == 'Largest pct rise':
-            format_y_axis_as_pct = True
-            display_df = function_executor(get_largest_pct_rise, days, tickers, title='Largest % rise')
-
-        elif show_price_action =='Historic Volatility':
-            format_y_axis_as_pct = True,
-            display_df = function_executor(get_hist_vlt_series, days, tickers, title='Historic Volatility')
-
-           # 'Daily Volatility',
-            #                     'Historical Vlt Series'
-
-    with col2:
-        fig = go.Figure()
-
-        for ticker in display_df:
-            fig.add_trace(go.Scatter(
-                x=display_df.index,
-                y=display_df[ticker],
-                name=ticker,
-                mode="lines"
-            ))
-        if format_y_axis_as_pct:
-            fig.update_yaxes(tickformat=".1%")
-
-        fig.update_xaxes(
-            dtick="M1",  # one tick per month
-            tickformat="%b '%y",  # Jan '24
-            tickangle=-45,  # tilt to avoid overlap
-            showgrid=True,
-            gridcolor="rgba(255,255,255,0.1)",
-            tickcolor="white",
-            tickfont=dict(size=11),
-        )
-
-        end_date = closes.index[-1]  # last row index value
-        start_date = closes.index[0]
-
-        delta_days = (end_date - start_date).days
-
-        if delta_days <= 90:
-            dtick, fmt = "M1", "%d %b"  # short range → daily/weekly labels
-        elif delta_days <= 365:
-            dtick, fmt = "M1", "%b '%y"  # 1 year → monthly
-        elif delta_days <= 365 * 3:
-            dtick, fmt = "M3", "%b '%y"  # 3 years → quarterly
-        else:
-            dtick, fmt = "M12", "%Y"  # long range → yearly
-
-        fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
-
-        # fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
-        st.plotly_chart(fig, width='stretch')
 
 
