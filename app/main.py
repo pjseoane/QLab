@@ -102,9 +102,10 @@ with st.sidebar:
                                  'Largest pct rise',
 
                                  ])
-        #show_cumm_returns= st.checkbox("Cummulative Returns", value=True)
-        #show_returns= st.checkbox("Returns", value=True)
-
+        if show_dataset=='Largest pct drop':
+            col100,col200=st.columns(2)
+            with col100:
+                days = st.number_input('days',min_value=1, max_value=500, value=20, step=1)
 
     with st.expander("Chart Settings", icon=":material/chart_data:", expanded=False):
         chart_type = st.radio("Type", ["Candlestick", "Line"])
@@ -239,13 +240,14 @@ with tab1:
                 display_df = function_executor(get_rebase, 'd', tickers, title='Rebase')
 
             elif show_dataset=='Largest pct drop':
+
                 format_y_axis_as_pct = True
-                days=30
+                #days=30
                 display_df = function_executor(get_largest_pct_drop, days, tickers, title='Largest % drop')
 
             elif show_dataset=='Largest pct rise':
                 format_y_axis_as_pct = True
-                days=30
+                #days=30
                 display_df = function_executor(get_largest_pct_rise, days, tickers, title='Largest % rise')
 
 
