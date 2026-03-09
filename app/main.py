@@ -72,7 +72,7 @@ st.set_page_config(
     layout="wide",
 )
 
-st.title("📈 Investment Ideas Quant Lab 2")
+st.title("📈 Investment Ideas Quant Lab")
 st.caption("Powered by yfinance · Data from Yahoo Finance")
 st.markdown("""
                                     <style>
@@ -264,8 +264,6 @@ with tab1: #Datasets
 
 
                 display_df = function_executor(get_hist_vlt_series, days,tickers,   title='Historic Volatility')
-
-
 
 
         with col2: # Chart
