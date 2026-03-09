@@ -46,6 +46,11 @@ def get_largest_pct_rise(days=30):
 def get_hist_vlt_series(days=30):
     return q_obj.get_hist_vlt_series(days=days)
 
+def get_summary(freq='ME'):
+    return q_obj.get_summary(freq=freq)
+
+
+
 def function_executor(func, parameters,tickers,title='title' ):
     st.subheader(title)
     output_df=func(parameters)
@@ -135,7 +140,7 @@ with st.sidebar:
                                      'Largest pct drop',
                                      'Largest pct rise',
                                      'Historic Volatility',
-                                     'Daily Volatility',
+                                     'Summary',
 
                                      ])
 
@@ -258,14 +263,28 @@ with tab1: #Datasets
                 display_df = function_executor(get_largest_pct_rise, days,tickers,   title=show_dataset)
 
             elif show_dataset == 'Historic Volatility':
-                title='Historic Volatility'
                 format_y_axis_as_pct = True,
-
                 days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-
-
                 display_df = function_executor(get_hist_vlt_series, days,tickers, title=show_dataset)
 
+            elif show_dataset == 'Summary':
+                format_y_axis_as_pct = True,
+                #days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
+                #display_df = function_executor(get_summary, 'ME',tickers, title=show_dataset)
+
+                st.subheader(show_dataset)
+                output_df = get_summary(freq='ME')
+                #output_df.index = output_df.index.date
+                st.dataframe(
+
+                    (output_df #.style.format("{:.2%}")
+                     # .background_gradient( cmap="RdYlGn")
+                     #.highlight_max(color="lightgreen")
+                     #.highlight_min(color="salmon")
+                     )
+                    #column_order=tickers,  # reorder columns shown
+
+                )
 
         with col2: # Chart
             fig = go.Figure()
