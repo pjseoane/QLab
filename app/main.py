@@ -20,10 +20,6 @@ from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
                    max_entries=20,
                    show_spinner=True,
                    )
-# cache for 5 minutes
-#def get_prices(tickers: list, period='max', interval='1d')-> pd.DataFrame:
-#    y_obj= price_fetcher(tickers, period=period, interval=interval)
-#    return y_obj.get_close(adjusted=True,freq='d')
 
 def get_closes(adjusted=True, freq='d'):
     return y_obj.get_close(adjusted=adjusted, freq=freq)
