@@ -242,7 +242,18 @@ with tab1: #Datasets
 
             elif show_dataset == 'Historic Volatility':
                 format_y_axis_as_pct = True,
+                st.markdown("""
+                                    <style>
+                                    [data-testid="stNumberInput"] input {
+                                        font-size: 12px;
+                                        height: 28px;
+                                        color: #26a69a;
+                                    }
+                                    </style>
+                                """, unsafe_allow_html=True)
                 days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
+
+
                 display_df = function_executor(get_hist_vlt_series, days,tickers,   title='Largest % drop')
 
 
