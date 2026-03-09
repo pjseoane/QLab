@@ -74,7 +74,24 @@ st.set_page_config(
 
 st.title("📈 Investment Ideas Quant Lab")
 st.caption("Powered by yfinance · Data from Yahoo Finance")
-
+st.markdown("""
+                                    <style>
+                                    [data-testid="stNumberInput"] input {
+                                        font-size: 12px;
+                                        height: 28px;
+                                        padding: 2px 8px; 
+                                        color: #26a69a;
+                                        background-color: #1e1e2e;
+                                        border: 1px solid #26a69a;
+                                        border-radius: 4px;
+                                        width: 40px;
+                                    }
+                                    [data-testid="stNumberInput"] label {
+                                    color: #aaaaaa;
+                                    font-size: 12px;
+                                    }
+                                    </style>
+                                """, unsafe_allow_html=True)
 
 
 # ── Sidebar controls ───────────────────────────────────────────────────────────
@@ -242,15 +259,7 @@ with tab1: #Datasets
 
             elif show_dataset == 'Historic Volatility':
                 format_y_axis_as_pct = True,
-                st.markdown("""
-                                    <style>
-                                    [data-testid="stNumberInput"] input {
-                                        font-size: 12px;
-                                        height: 28px;
-                                        color: #26a69a;
-                                    }
-                                    </style>
-                                """, unsafe_allow_html=True)
+
                 days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
 
 
