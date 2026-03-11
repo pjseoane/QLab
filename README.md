@@ -44,3 +44,5 @@ Then open http://localhost:8501 in your browser.
 - Data is cached for 5 minutes to avoid hammering the Yahoo Finance API
 - yfinance uses Yahoo Finance's unofficial API — it's great for personal/learning projects
 - Max ~8-10 tickers recommended for best performance
+
+streamlit hello

@@ -14,9 +14,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
 from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 
-#test cambio git2
 # ── Data fetching ──────────────────────────────────────────────────────────────
-#df=pd.DataFrame()
+
 @st.cache_resource(ttl=timedelta(minutes=5),
                    max_entries=20,
                    show_spinner=True,
@@ -50,23 +49,8 @@ def get_summary(freq='ME'):
     return q_obj.get_summary(freq=freq)
 
 
-
-def function_executor(func, parameters,tickers,title='title' ):
-    st.subheader(title)
-    output_df=func(parameters)
-    output_df.index = output_df.index.date
-    st.dataframe(
-
-        output_df.style
-        .format("{:.2%}", subset=tickers)
-        .background_gradient(subset=tickers, cmap="RdYlGn")
-        .highlight_max(subset=tickers, color="lightgreen")
-        .highlight_min(subset=tickers, color="salmon"),
-
-        hide_index=False,  # hide the index column
-        column_order=tickers,  # reorder columns shown
-
-    )
+def function_executor(func, parameters)->pd.DataFrame:
+    output_df = func(parameters)
     return output_df
 
 
@@ -113,10 +97,6 @@ with st.sidebar:
 
         col1, col2 = st.columns(2)
 
-        # with col1:
-        #  start_date = st.date_input("Start date", date.today() - timedelta(days=365))
-        # with col2:
-        #   end_date = st.date_input("End date", date.today())
 
         with col1:
             period = st.selectbox(
@@ -172,12 +152,6 @@ with st.sidebar:
         st.cache_resource.clear()
         st.toast("Cache cleared! Fetching fresh data...", icon="✅")
         st.session_state["last_refresh"] = datetime.now().strftime("%H:%M:%S")
-        # Load data
-        #with st.spinner("Fetching data..."):
-         #   df = get_prices(tickers, period, interval)
-
-        #    df1=df.copy(True)
-        #    df.index = df.index.date
 
 
         #downloaded=True
@@ -198,10 +172,6 @@ with st.spinner("Fetching data..."):
     closes=y_obj.get_close(adjusted=True,freq='d')
     q_obj= cQuant(closes)
 
-    #df = get_prices(tickers, period, interval)
-   #df1 = df.copy(True)
-   #df.index = df.index.date
-
 
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
@@ -210,136 +180,157 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(["🗃️ Datasets","📊 Price Charts", 
 # ════════════════════════════════════════════════════════════════════════════════
 # TAB 1 — Price Charts (one per ticker)
 # ════════════════════════════════════════════════════════════════════════════════
-with tab1: #Datasets
-    #if downloaded:
-        col1, col2 = st.columns([1,3])
+with (tab1): #Datasets
+    # if downloaded:
+    tab_chart,tab_dataframe =st.tabs(["Chart", "Dataframe"])
 
-        width = 400,  # stretch to full width
-        height = 300
+    display_df = closes.copy()
+    format_y_axis_as_pct = False
 
-        display_df = closes.copy()
+    if show_dataset == 'Closes':
+        format = "{:.2f}"
+    else:
+        format = "{:.2%}"
+
+    if show_dataset == 'Closes':
         format_y_axis_as_pct = False
 
-        with col1:
-            if show_dataset=='Closes':
-                format_y_axis_as_pct = False
+    elif show_dataset == 'Cumulative Returns':
 
-                st.subheader("Closes")
-                display_df.index = display_df.index.strftime("%Y-%m-%d")
+        format_y_axis_as_pct = True
+        display_df = function_executor(get_cum_returns, 'd')
 
-                st.dataframe(
-                   display_df,
+    elif show_dataset == 'Cumulative Returns':
 
-                    hide_index=False,  # hide the index column
-                    column_order=tickers,  # reorder columns shown
-                )
-            elif show_dataset=='Cumulative Returns':
+        format_y_axis_as_pct = True
+        display_df = function_executor(get_cum_returns, 'd')
 
-                format_y_axis_as_pct = True
-                display_df = function_executor(get_cum_returns, 'd', tickers, title=show_dataset)
+    elif show_dataset == 'Returns':
 
-            elif show_dataset=='Returns':
+        format_y_axis_as_pct = True
+        display_df = function_executor(get_pct_returns, 'd')
 
-                format_y_axis_as_pct = True
-                display_df = function_executor(get_pct_returns, 'd', tickers, title=show_dataset)
+    elif show_dataset == 'Log Returns':
 
-            elif show_dataset=='Log Returns':
+        format_y_axis_as_pct = True
+        display_df = function_executor(get_log_returns, 'd')
 
-                format_y_axis_as_pct = True
-                display_df = function_executor(get_log_returns, 'd', tickers, title=show_dataset)
+    elif show_dataset == 'Rebase':
+        format_y_axis_as_pct = True
+        display_df = function_executor(get_rebase, 'd')
 
-            elif show_dataset=='Rebase':
-                format_y_axis_as_pct = True
-                display_df = function_executor(get_rebase, 'd', tickers, title=show_dataset)
+    elif show_dataset == 'Largest pct drop':
+        format_y_axis_as_pct = True
+        days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
+        display_df = function_executor(get_largest_pct_drop, days)
 
-            elif show_dataset == 'Largest pct drop':
-                format_y_axis_as_pct = True
-                days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-                display_df = function_executor(get_largest_pct_drop, days,tickers,   title=show_dataset)
+    elif show_dataset == 'Largest pct rise':
+        format_y_axis_as_pct = True
+        days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
+        display_df = function_executor(get_largest_pct_rise, days)
 
-            elif show_dataset == 'Largest pct rise':
-                format_y_axis_as_pct = True
-                days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-                display_df = function_executor(get_largest_pct_rise, days,tickers,   title=show_dataset)
+    elif show_dataset == 'Historic Volatility':
+        format_y_axis_as_pct = True,
+        days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
+        display_df = function_executor(get_hist_vlt_series, days)
 
-            elif show_dataset == 'Historic Volatility':
-                format_y_axis_as_pct = True,
-                days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-                display_df = function_executor(get_hist_vlt_series, days,tickers, title=show_dataset)
 
-            elif show_dataset == 'Summary':
-                format_y_axis_as_pct = True,
-                #days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-                #display_df = function_executor(get_summary, 'ME',tickers, title=show_dataset)
+    elif show_dataset == 'Summary':
+        format_y_axis_as_pct = True,
 
-                st.subheader(show_dataset)
-                output_df = get_summary(freq='ME')
-                #output_df.index = output_df.index.date
-                st.dataframe(
+        st.subheader(show_dataset)
+        output_df = get_summary(freq='ME')
 
-                    (output_df #.style.format("{:.2%}")
-                     # .background_gradient( cmap="RdYlGn")
-                     #.highlight_max(color="lightgreen")
-                     #.highlight_min(color="salmon")
-                     )
-                    #column_order=tickers,  # reorder columns shown
+        st.dataframe(
 
-                )
+            (output_df  # .style.format("{:.2%}")
+             # .background_gradient( cmap="RdYlGn")
+             # .highlight_max(color="lightgreen")
+             # .highlight_min(color="salmon")
+             )
+            # column_order=tickers,  # reorder columns shown
 
-        with col2: # Chart
-            fig = go.Figure()
+        )
 
-            for ticker in display_df:
-                fig.add_trace(go.Scatter(
+    with tab_chart:#Charts
+        fig = go.Figure()
+
+        for ticker in display_df:
+            fig.add_trace(go.Scatter(
                 x=display_df.index,
                 y=display_df[ticker],
                 name=ticker,
                 mode="lines"
-                ))
-            if format_y_axis_as_pct:
-                fig.update_yaxes(tickformat=".1%")
+            ))
+        if format_y_axis_as_pct:
+            fig.update_yaxes(tickformat=".1%")
 
-            fig.update_layout(
-                title=dict(
-                    text=show_dataset,
-                    font=dict(size=20, color="white"),
-                    x=0.5,  # centered (0=left, 0.5=center, 1=right)
-                    xanchor="center",
-                    y=0.95,  # vertical position
-                )
+        fig.update_layout(
+            title=dict(
+                text=show_dataset,
+                font=dict(size=20, color="white"),
+                x=0.5,  # centered (0=left, 0.5=center, 1=right)
+                xanchor="center",
+                y=0.95,
+
+                # vertical position
+            )
+        )
+
+
+        fig.update_layout(
+            autosize=True,  # ignores width/height, fills container
+            margin=dict(l=50, r=50, t=40, b=20)  # control margins too
+        )
+
+        fig.update_xaxes(
+            dtick="M1",  # one tick per month
+            tickformat="%b '%y",  # Jan '24
+            tickangle=-45,  # tilt to avoid overlap
+            showgrid=True,
+            gridcolor="rgba(255,255,255,0.1)",
+            tickcolor="white",
+            tickfont=dict(size=11),
             )
 
-            fig.update_xaxes(
-                    dtick="M1",  # one tick per month
-                    tickformat="%b '%y",  # Jan '24
-                    tickangle=-45,  # tilt to avoid overlap
-                    showgrid=True,
-                    gridcolor="rgba(255,255,255,0.1)",
-                    tickcolor="white",
-                    tickfont=dict(size=11),
-                )
+        end_date = closes.index[-1]  # last row index value
+        start_date = closes.index[0]
 
-            end_date = closes.index[-1]  # last row index value
-            start_date = closes.index[0]
+        delta_days = (end_date - start_date).days
 
-            delta_days = (end_date - start_date).days
+        if delta_days <= 90:
+            dtick, fmt = "M1", "%d %b"  # short range → daily/weekly labels
+        elif delta_days <= 365:
+            dtick, fmt = "M1", "%b '%y"  # 1 year → monthly
+        elif delta_days <= 365 * 3:
+            dtick, fmt = "M3", "%b '%y"  # 3 years → quarterly
+        else:
+            dtick, fmt = "M12", "%Y"  # long range → yearly
 
-            if delta_days <= 90:
-                dtick, fmt = "M1", "%d %b"  # short range → daily/weekly labels
-            elif delta_days <= 365:
-                dtick, fmt = "M1", "%b '%y"  # 1 year → monthly
-            elif delta_days <= 365 * 3:
-                dtick, fmt = "M3", "%b '%y"  # 3 years → quarterly
-            else:
-                dtick, fmt = "M12", "%Y"  # long range → yearly
+        fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
 
-            fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
-
-            #fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
-            st.plotly_chart(fig, width='stretch')
+        # fig.update_layout(width=800, height=500)
+        st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
 
 
+    with tab_dataframe: #Dataframe
 
+            st.subheader(show_dataset)
+            display_df.index = display_df.index.strftime("%Y-%m-%d")
+
+            st.dataframe(
+                display_df.style
+                .format(formatter=format, subset=tickers),
+                #.background_gradient(subset=tickers, cmap="RdYlGn")
+                #.background_gradient(subset=tickers, cmap="RdYlGn"),
+                #.highlight_max(subset=tickers, color="lightgreen")
+                #.highlight_min(subset=tickers, color="salmon"),
+
+                width=800,
+                height=400,
+                hide_index=False,  # hide the index column
+                column_order=tickers,  # reorder columns shown
+            )
 
 
