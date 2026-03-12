@@ -1,4 +1,10 @@
 import pandas as pd
+
+
+
+
+
+
 def load_portfolios (fileCSV) -> dict:
     df = pd.read_csv(fileCSV)
     output={}
@@ -8,3 +14,4 @@ def load_portfolios (fileCSV) -> dict:
             "weights": dict(zip(group['Ticker'], group['Wgt']))
         }
     return output
+

@@ -5,7 +5,6 @@ import os
 from datetime import timedelta,datetime
 
 import plotly.graph_objects as go
-#import from utils
 from utils.funcs import load_portfolios
 
 #sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -13,21 +12,29 @@ from utils.funcs import load_portfolios
 #import from external_libs
 from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
 from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
+
+
 portfolios: dict=load_portfolios("external_libs/Model Portfolios - Export.csv")
 
-# ── Data fetching ──────────────────────────────────────────────────────────────
+def function_executor(func, parameters)->pd.DataFrame:
+   output_df = func(parameters)
+   return output_df
 
+
+# ── Data fetching ──────────────────────────────────────────────────────────────
 @st.cache_resource(ttl=timedelta(minutes=5),
                    max_entries=20,
                    show_spinner=True,
                    )
 
-
-
-
+#las funciones definidas aqui tienen un cache de 5 minutos
 
 def get_closes(adjusted=True, freq='d'):
-    return y_obj.get_close(adjusted=adjusted, freq=freq)
+    #try:
+        return y_obj.get_close(adjusted=adjusted, freq=freq)
+#    #except Exception as e:
+#        #st.error(f"Failed to fetch data: {e}")
+
 
 def get_cum_returns(freq='d'):
     return q_obj.get_cum_returns(freq=freq)
@@ -54,9 +61,6 @@ def get_summary(freq='ME'):
     return q_obj.get_summary(freq=freq)
 
 
-def function_executor(func, parameters)->pd.DataFrame:
-    output_df = func(parameters)
-    return output_df
 
 
 
@@ -94,30 +98,42 @@ st.markdown("""
 
 # ── Sidebar controls ───────────────────────────────────────────────────────────
 with st.sidebar:
-    st.header("⚙️ Settings/New Layout")
+    st.header("⚙️ Settings/Load Portfolios")
+
+    with st.expander("Portfolios", icon=":material/playlist_add_check:",expanded=False):
+        tickers={}
+        selected_watchlist = st.selectbox("Select Watchlist", list(portfolios.keys()))
+        tickers=portfolios[ selected_watchlist]['tickers']
+        weights=portfolios[ selected_watchlist]['weights']
+        # show weights as info
+        for ticker, weight in weights.items():
+            st.caption(f"{ticker}: {weight:.0%}")
+
+
 
     with st.expander("Tickers", icon=":material/playlist_add_check:",expanded=True):
         tickers_input = st.text_input(
             "Tickers (comma-separated)",
-            value="AAPL, MSFT, GOOGL",
+            #value="AAPL, MSFT, GOOGL",
+            value=', '.join(tickers),
             help="e.g. AAPL, TSLA, AMZN",
         )
         tickers = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
 
+    with st.expander('Period', icon=":material/playlist_add_check:",expanded=False):
         col1, col2 = st.columns(2)
-
 
         with col1:
             period = st.selectbox(
                 "Period", ['1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max'], index=5
             )
-
         with col2:
             interval = st.selectbox(
                 "Interval", ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '4h',
                          '1d', '5d', '1wk', '1mo', '3mo'], index=9,
                 help="Candle / data point size"
             )
+
     with st.expander('Datasets', icon=":material/dataset:", expanded=False):
 
             show_dataset = st.radio("Show Datasets",
@@ -132,7 +148,6 @@ with st.sidebar:
                                      'Summary',
 
                                      ])
-
 
 
     with st.expander("Chart Settings", icon=":material/chart_data:", expanded=False):
@@ -177,9 +192,11 @@ data: dict[str, pd.DataFrame] = {}
 errors: list[str] = []
 
 with st.spinner("Fetching data..."):
-    y_obj = price_fetcher(tickers, period=period, interval=interval)
-    closes=y_obj.get_close(adjusted=True,freq='d')
-    q_obj= cQuant(closes)
+
+        y_obj = price_fetcher(tickers, period=period, interval=interval)
+        closes = y_obj.get_closes(adjusted=True, freq='d')
+        #closes = get_closes(adjusted=True, freq='d')
+        q_obj= cQuant(closes)
 
 
 
@@ -195,14 +212,16 @@ with (tab1): #Datasets
 
     display_df = closes.copy()
     format_y_axis_as_pct = False
+    format = "{:.2%}"
 
-    if show_dataset == 'Closes':
-        format = "{:.2f}"
-    else:
-        format = "{:.2%}"
+    #if show_dataset == 'Closes':
+    #    format = "{:.2f}"
+    #else:
+
 
     if show_dataset == 'Closes':
         format_y_axis_as_pct = False
+        format = "{:.2f}"
 
     elif show_dataset == 'Cumulative Returns':
 
@@ -262,6 +281,7 @@ with (tab1): #Datasets
         )
 
     with tab_chart:#Charts
+       try:
         fig = go.Figure()
 
         for ticker in display_df:
@@ -320,6 +340,8 @@ with (tab1): #Datasets
 
         # fig.update_layout(width=800, height=500)
         st.plotly_chart(fig, theme='streamlit', width='stretch')
+       except:
+        st.write('test...')
 
 
 
