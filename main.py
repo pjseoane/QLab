@@ -100,11 +100,11 @@ st.markdown("""
 with st.sidebar:
     st.header("⚙️ Settings/Load Portfolios")
 
-    with st.expander("Portfolios", icon=":material/playlist_add_check:",expanded=False):
-        tickers={}
+    with st.expander("Portfolio Analysis", icon=":material/analytics:", expanded=False):
+        #tickers = {}
         selected_watchlist = st.selectbox("Select Pack", list(portfolios.keys()))
-        tickers=portfolios[ selected_watchlist]['tickers']
-        weights=portfolios[ selected_watchlist]['weights']
+        tickers = portfolios[selected_watchlist]['tickers']
+        weights = portfolios[selected_watchlist]['weights']
         # show weights as info
         for ticker, weight in weights.items():
             st.caption(f"{ticker}: {weight:.0%}")
@@ -112,6 +112,7 @@ with st.sidebar:
 
 
     with st.expander("Tickers", icon=":material/playlist_add_check:",expanded=True):
+
         tickers_input = st.text_input(
             "Tickers (comma-separated)",
             #value="AAPL, MSFT, GOOGL",
@@ -162,9 +163,7 @@ with st.sidebar:
         show_pe = st.checkbox("P/E", value=True)
         show_beta = st.checkbox("Beta", value=True)
 
-    with st.expander("Portfolio Analysis", icon=":material/analytics:", expanded=False):
-        sharpe_analysis=st.checkbox("Sharpe Ratio", value=True)
-        markowitz=st.checkbox("Markowitz", value=True)
+
 
     st.divider()
     with st.expander("ETF Analysis", icon=":material/graph_5:", expanded=False):
