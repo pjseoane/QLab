@@ -29,9 +29,9 @@ def function_executor(func, parameters)->pd.DataFrame:
 
 #las funciones definidas aqui tienen un cache de 5 minutos
 
-def get_closes(adjusted=True, freq='d'):
+#def get_closes(adjusted=True, freq='d'):
     #try:
-        return y_obj.get_close(adjusted=adjusted, freq=freq)
+#        return y_obj.get_close(adjusted=adjusted, freq=freq)
 #    #except Exception as e:
 #        #st.error(f"Failed to fetch data: {e}")
 
@@ -102,7 +102,7 @@ with st.sidebar:
 
     with st.expander("Portfolios", icon=":material/playlist_add_check:",expanded=False):
         tickers={}
-        selected_watchlist = st.selectbox("Select Watchlist", list(portfolios.keys()))
+        selected_watchlist = st.selectbox("Select Pack", list(portfolios.keys()))
         tickers=portfolios[ selected_watchlist]['tickers']
         weights=portfolios[ selected_watchlist]['weights']
         # show weights as info
@@ -194,8 +194,12 @@ errors: list[str] = []
 with st.spinner("Fetching data..."):
 
         y_obj = price_fetcher(tickers, period=period, interval=interval)
-        closes = y_obj.get_closes(adjusted=True, freq='d')
-        #closes = get_closes(adjusted=True, freq='d')
+        closes = y_obj.get_close(adjusted=True, freq='d')
+        # Aca hay que llamar directo a y_obj.get_close para regenerar los closes y no a una func local por el cahce de espera
+        # si se cambian los tickers y el cache no actualiza despues da error
+        #   ----> esta no funciona -----> closes = get_closes(adjusted=True, freq='d')
+
+
         q_obj= cQuant(closes)
 
 
@@ -281,67 +285,67 @@ with (tab1): #Datasets
         )
 
     with tab_chart:#Charts
-       try:
-        fig = go.Figure()
+        try:
+            fig = go.Figure()
 
-        for ticker in display_df:
-            fig.add_trace(go.Scatter(
-                x=display_df.index,
-                y=display_df[ticker],
-                name=ticker,
-                mode="lines"
-            ))
-        if format_y_axis_as_pct:
-            fig.update_yaxes(tickformat=".1%")
+            for ticker in display_df:
+                fig.add_trace(go.Scatter(
+                    x=display_df.index,
+                    y=display_df[ticker],
+                    name=ticker,
+                    mode="lines"
+                ))
+            if format_y_axis_as_pct:
+                fig.update_yaxes(tickformat=".1%")
 
-        fig.update_layout(
-            title=dict(
-                text=show_dataset,
-                font=dict(size=20, color="white"),
-                x=0.5,  # centered (0=left, 0.5=center, 1=right)
-                xanchor="center",
-                y=0.95,
+            fig.update_layout(
+                title=dict(
+                    text=show_dataset,
+                    font=dict(size=20, color="white"),
+                    x=0.5,  # centered (0=left, 0.5=center, 1=right)
+                    xanchor="center",
+                    y=0.95,
 
-                # vertical position
-            )
-        )
-
-
-        fig.update_layout(
-            autosize=True,  # ignores width/height, fills container
-            margin=dict(l=50, r=50, t=40, b=20)  # control margins too
-        )
-
-        fig.update_xaxes(
-            dtick="M1",  # one tick per month
-            tickformat="%b '%y",  # Jan '24
-            tickangle=-45,  # tilt to avoid overlap
-            showgrid=True,
-            gridcolor="rgba(255,255,255,0.1)",
-            tickcolor="white",
-            tickfont=dict(size=11),
+                    # vertical position
+                )
             )
 
-        end_date = closes.index[-1]  # last row index value
-        start_date = closes.index[0]
 
-        delta_days = (end_date - start_date).days
+            fig.update_layout(
+                autosize=True,  # ignores width/height, fills container
+                margin=dict(l=50, r=50, t=40, b=20)  # control margins too
+            )
 
-        if delta_days <= 90:
-            dtick, fmt = "M1", "%d %b"  # short range → daily/weekly labels
-        elif delta_days <= 365:
-            dtick, fmt = "M1", "%b '%y"  # 1 year → monthly
-        elif delta_days <= 365 * 3:
-            dtick, fmt = "M3", "%b '%y"  # 3 years → quarterly
-        else:
-            dtick, fmt = "M12", "%Y"  # long range → yearly
+            fig.update_xaxes(
+                dtick="M1",  # one tick per month
+                tickformat="%b '%y",  # Jan '24
+                tickangle=-45,  # tilt to avoid overlap
+                showgrid=True,
+                gridcolor="rgba(255,255,255,0.1)",
+                tickcolor="white",
+                tickfont=dict(size=11),
+                )
 
-        fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
+            end_date = closes.index[-1]  # last row index value
+            start_date = closes.index[0]
 
-        # fig.update_layout(width=800, height=500)
-        st.plotly_chart(fig, theme='streamlit', width='stretch')
-       except:
-        st.write('test...')
+            delta_days = (end_date - start_date).days
+
+            if delta_days <= 90:
+                dtick, fmt = "M1", "%d %b"  # short range → daily/weekly labels
+            elif delta_days <= 365:
+                dtick, fmt = "M1", "%b '%y"  # 1 year → monthly
+            elif delta_days <= 365 * 3:
+                dtick, fmt = "M3", "%b '%y"  # 3 years → quarterly
+            else:
+                dtick, fmt = "M12", "%Y"  # long range → yearly
+
+            fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
+
+            # fig.update_layout(width=800, height=500)
+            st.plotly_chart(fig, theme='streamlit', width='stretch')
+        except:
+            st.write('Some problem with tickers...')
 
 
 
