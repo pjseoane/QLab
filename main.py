@@ -4,15 +4,16 @@ import sys
 import os
 from datetime import timedelta,datetime
 
-import plotly.express as px
 import plotly.graph_objects as go
+#import from utils
+from utils.funcs import load_portfolios
 
+#sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-
+#import from external_libs
 from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
 from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
+portfolios: dict=load_portfolios("external_libs/Model Portfolios - Export.csv")
 
 # ── Data fetching ──────────────────────────────────────────────────────────────
 
@@ -20,6 +21,10 @@ from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
                    max_entries=20,
                    show_spinner=True,
                    )
+
+
+
+
 
 def get_closes(adjusted=True, freq='d'):
     return y_obj.get_close(adjusted=adjusted, freq=freq)
@@ -52,6 +57,10 @@ def get_summary(freq='ME'):
 def function_executor(func, parameters)->pd.DataFrame:
     output_df = func(parameters)
     return output_df
+
+
+
+
 
 
 # ── Page config ────────────────────────────────────────────────────────────────
@@ -310,7 +319,7 @@ with (tab1): #Datasets
         fig.update_xaxes(dtick=dtick, tickformat=fmt, tickangle=-45)
 
         # fig.update_layout(width=800, height=500)
-        st.plotly_chart(fig, theme='streamlit', use_container_width=True)
+        st.plotly_chart(fig, theme='streamlit', width='stretch')
 
 
 
