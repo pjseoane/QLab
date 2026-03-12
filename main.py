@@ -105,9 +105,10 @@ with st.sidebar:
         selected_watchlist = st.selectbox("Select Pack", list(portfolios.keys()))
         tickers = portfolios[selected_watchlist]['tickers']
         weights = portfolios[selected_watchlist]['weights']
-        # show weights as info
+
         for ticker, weight in weights.items():
-            st.caption(f"{ticker}: {weight:.0%}")
+           st.caption(f"{ticker}: {weight:.0%}")
+
 
 
 
@@ -204,7 +205,7 @@ with st.spinner("Fetching data..."):
 
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["🗃️ Datasets","📊 Price Charts", "⚖️ Comparison", "📋 Fundamentals", "🔥 Correlation"])
+tab1, tab2, tab3, tab4, Portfolio = st.tabs(["🗃️ Datasets","📊 Price Charts", "⚖️ Comparison", "📋 Fundamentals", "🔥 Portfolio"])
 
 # ════════════════════════════════════════════════════════════════════════════════
 # TAB 1 — Price Charts (one per ticker)
@@ -366,5 +367,18 @@ with (tab1): #Datasets
                 hide_index=False,  # hide the index column
                 column_order=tickers,  # reorder columns shown
             )
+
+with (Portfolio):
+
+
+    with st.container(border=True):
+        tickers= st.multiselect ("Tickers", tickers, default=tickers )
+        equal_weight=st.toggle('Equal weights')# show weights as info
+
+
+
+    tab1, tab2 = st.tabs(['Chart','Dataframe'])
+
+
 
 
