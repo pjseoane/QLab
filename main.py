@@ -14,7 +14,7 @@ from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
 from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 
 
-portfolios: dict=load_portfolios("external_libs/Model Portfolios - Export.csv")
+
 
 def function_executor(func, parameters)->pd.DataFrame:
    output_df = func(parameters)
@@ -102,6 +102,11 @@ with st.sidebar:
 
     with st.expander("Portfolio Analysis", icon=":material/analytics:", expanded=False):
         #tickers = {}
+        path_to_csv=  st.text_input('Path to CSV', value="C:\\Users\\pauli\\Downloads\\Model Portfolios - Export.csv")
+
+
+        portfolios: dict = load_portfolios(path_to_csv)
+
         selected_watchlist = st.selectbox("Select Pack", list(portfolios.keys()))
         tickers = portfolios[selected_watchlist]['tickers']
         weights = portfolios[selected_watchlist]['weights']
@@ -170,6 +175,8 @@ with st.sidebar:
     with st.expander("ETF Analysis", icon=":material/graph_5:", expanded=False):
         etf_components=st.checkbox("ETF Components", value=True)
 
+
+
     st.divider()
     #downloaded=False
     if st.sidebar.button("Refresh Data", icon=":material/refresh:"):
@@ -205,7 +212,7 @@ with st.spinner("Fetching data..."):
 
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4, Portfolio = st.tabs(["🗃️ Datasets","📊 Price Charts", "⚖️ Comparison", "📋 Fundamentals", "🔥 Portfolio"])
+tab1, tab2, tab3, Portfolio = st.tabs(["📊 Charts & Datasets", "⚖️ Comparison", "📋 Fundamentals", "🔥 Portfolio"])
 
 # ════════════════════════════════════════════════════════════════════════════════
 # TAB 1 — Price Charts (one per ticker)
