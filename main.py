@@ -16,18 +16,14 @@ from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 
 
 
-def function_executor(func, parameters)->pd.DataFrame:
-   output_df = func(parameters)
-   return output_df
+#def function_executor(func, parameters)->pd.DataFrame:
+#   output_df = func(parameters)
+#   return output_df
 
 
 # ── Data fetching ──────────────────────────────────────────────────────────────
-@st.cache_resource(ttl=timedelta(minutes=5),
-                   max_entries=20,
-                   show_spinner=True,
-                   )
 
-#las funciones definidas aqui tienen un cache de 5 minutos
+
 
 #def get_closes(adjusted=True, freq='d'):
     #try:
@@ -36,31 +32,29 @@ def function_executor(func, parameters)->pd.DataFrame:
 #        #st.error(f"Failed to fetch data: {e}")
 
 
-def get_cum_returns(freq='d'):
-    return q_obj.get_cum_returns(freq=freq)
+#def get_cum_returns(freq='d'):
+#    return q_obj.get_cum_returns(freq=freq)
 
-def get_pct_returns(freq='d'):
-    return q_obj.get_pct_returns(freq=freq)
+#def get_pct_returns(freq='d'):
+#    return q_obj.get_pct_returns(freq=freq)
 
-def get_log_returns(freq='d'):
-    return q_obj.get_log_returns(freq=freq)
+#def get_log_returns(freq='d'):
+#    return q_obj.get_log_returns(freq=freq)
 
-def get_rebase(freq='d'):
-    return q_obj.get_rebase(freq=freq)
+#def get_rebase(freq='d'):
+#    return q_obj.get_rebase(freq=freq)
 
-def get_largest_pct_drop(days=30):
-    return q_obj.get_largest_pct_drop(days=days)
+#def get_largest_pct_drop(days=30):
+#    return q_obj.get_largest_pct_drop(days=days)
 
-def get_largest_pct_rise(days=30):
-    return q_obj.get_largest_pct_rise(days=days)
+#def get_largest_pct_rise(days=30):
+#    return q_obj.get_largest_pct_rise(days=days)
 
-def get_hist_vlt_series(days=30):
-    return q_obj.get_hist_vlt_series(days=days)
+#def get_hist_vlt_series(days=30):
+#    return q_obj.get_hist_vlt_series(days=days)
 
-def get_summary(freq='ME'):
-    return q_obj.get_summary(freq=freq)
-
-
+#def get_summary(freq='ME'):
+#    return q_obj.get_summary(freq=freq)
 
 
 
@@ -100,7 +94,7 @@ st.markdown("""
 with st.sidebar:
     st.header("⚙️ Settings/Load Portfolios")
 
-    with st.expander("Portfolio Analysis", icon=":material/analytics:", expanded=False):
+    with st.expander("Portfolio Selector", icon=":material/analytics:", expanded=False):
         #tickers = {}
         path_to_csv=  st.text_input('Path to CSV', value="C:\\Users\\pauli\\Downloads\\Model Portfolios - Export.csv")
 
@@ -195,19 +189,27 @@ with st.sidebar:
 
 
 # ── Load data for all tickers ──────────────────────────────────────────────────
+@st.cache_resource(ttl=timedelta(minutes=5),
+                       max_entries=20,
+                       show_spinner=True,
+                       )
+def get_yFinance_obj_from_API(tickers, period, interval):
+    return price_fetcher(tickers, period=period, interval=interval)
+
+
 data: dict[str, pd.DataFrame] = {}
 errors: list[str] = []
 
 with st.spinner("Fetching data..."):
 
-        y_obj = price_fetcher(tickers, period=period, interval=interval)
-        closes = y_obj.get_close(adjusted=True, freq='d')
+    y_obj = get_yFinance_obj_from_API(tickers, period=period, interval=interval)
+    closes = y_obj.get_close(adjusted=True, freq='d')
         # Aca hay que llamar directo a y_obj.get_close para regenerar los closes y no a una func local por el cahce de espera
         # si se cambian los tickers y el cache no actualiza despues da error
         #   ----> esta no funciona -----> closes = get_closes(adjusted=True, freq='d')
 
 
-        q_obj= cQuant(closes)
+    q_obj= cQuant(closes)
 
 
 
@@ -237,48 +239,44 @@ with (tab1): #Datasets
     elif show_dataset == 'Cumulative Returns':
 
         format_y_axis_as_pct = True
-        display_df = function_executor(get_cum_returns, 'd')
+        display_df = q_obj.get_cum_returns('d')
 
-    elif show_dataset == 'Cumulative Returns':
-
-        format_y_axis_as_pct = True
-        display_df = function_executor(get_cum_returns, 'd')
 
     elif show_dataset == 'Returns':
 
         format_y_axis_as_pct = True
-        display_df = function_executor(get_pct_returns, 'd')
+        display_df = q_obj.get_pct_returns('d')
 
     elif show_dataset == 'Log Returns':
 
         format_y_axis_as_pct = True
-        display_df = function_executor(get_log_returns, 'd')
+        display_df = q_obj.get_log_returns('d')
 
     elif show_dataset == 'Rebase':
         format_y_axis_as_pct = True
-        display_df = function_executor(get_rebase, 'd')
+        display_df = q_obj.get_rebase('d')
 
     elif show_dataset == 'Largest pct drop':
         format_y_axis_as_pct = True
         days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-        display_df = function_executor(get_largest_pct_drop, days)
+        display_df = q_obj.get_largest_pct_drop(days)
 
     elif show_dataset == 'Largest pct rise':
         format_y_axis_as_pct = True
         days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-        display_df = function_executor(get_largest_pct_rise, days)
+        display_df = q_obj.get_largest_pct_rise(days)
 
     elif show_dataset == 'Historic Volatility':
         format_y_axis_as_pct = True,
         days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-        display_df = function_executor(get_hist_vlt_series, days)
+        display_df = q_obj.get_hist_vlt_series(days)
 
 
     elif show_dataset == 'Summary':
         format_y_axis_as_pct = True,
 
         st.subheader(show_dataset)
-        output_df = get_summary(freq='ME')
+        output_df = q_obj.get_summary(freq='ME')
 
         st.dataframe(
 
