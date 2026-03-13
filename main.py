@@ -24,8 +24,8 @@ def get_yFinance_obj_from_API(tickers, period, interval):
     return price_fetcher(tickers, period=period, interval=interval)
 
 
-data: dict[str, pd.DataFrame] = {}
-errors: list[str] = []
+#data: dict[str, pd.DataFrame] = {}
+#errors: list[str] = []
 
 
 # ── Page config ────────────────────────────────────────────────────────────────
