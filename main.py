@@ -14,51 +14,18 @@ from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
 from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 
 
-
-
-#def function_executor(func, parameters)->pd.DataFrame:
-#   output_df = func(parameters)
-#   return output_df
-
-
 # ── Data fetching ──────────────────────────────────────────────────────────────
+# 5min conserva el cache de llamadas a yFinance
+@st.cache_resource(ttl=timedelta(minutes=5),
+                       max_entries=20,
+                       show_spinner=True,
+                       )
+def get_yFinance_obj_from_API(tickers, period, interval):
+    return price_fetcher(tickers, period=period, interval=interval)
 
 
-
-#def get_closes(adjusted=True, freq='d'):
-    #try:
-#        return y_obj.get_close(adjusted=adjusted, freq=freq)
-#    #except Exception as e:
-#        #st.error(f"Failed to fetch data: {e}")
-
-
-#def get_cum_returns(freq='d'):
-#    return q_obj.get_cum_returns(freq=freq)
-
-#def get_pct_returns(freq='d'):
-#    return q_obj.get_pct_returns(freq=freq)
-
-#def get_log_returns(freq='d'):
-#    return q_obj.get_log_returns(freq=freq)
-
-#def get_rebase(freq='d'):
-#    return q_obj.get_rebase(freq=freq)
-
-#def get_largest_pct_drop(days=30):
-#    return q_obj.get_largest_pct_drop(days=days)
-
-#def get_largest_pct_rise(days=30):
-#    return q_obj.get_largest_pct_rise(days=days)
-
-#def get_hist_vlt_series(days=30):
-#    return q_obj.get_hist_vlt_series(days=days)
-
-#def get_summary(freq='ME'):
-#    return q_obj.get_summary(freq=freq)
-
-
-
-
+data: dict[str, pd.DataFrame] = {}
+errors: list[str] = []
 
 
 # ── Page config ────────────────────────────────────────────────────────────────
@@ -189,26 +156,12 @@ with st.sidebar:
 
 
 # ── Load data for all tickers ──────────────────────────────────────────────────
-@st.cache_resource(ttl=timedelta(minutes=5),
-                       max_entries=20,
-                       show_spinner=True,
-                       )
-def get_yFinance_obj_from_API(tickers, period, interval):
-    return price_fetcher(tickers, period=period, interval=interval)
 
-
-data: dict[str, pd.DataFrame] = {}
-errors: list[str] = []
 
 with st.spinner("Fetching data..."):
 
     y_obj = get_yFinance_obj_from_API(tickers, period=period, interval=interval)
     closes = y_obj.get_close(adjusted=True, freq='d')
-        # Aca hay que llamar directo a y_obj.get_close para regenerar los closes y no a una func local por el cahce de espera
-        # si se cambian los tickers y el cache no actualiza despues da error
-        #   ----> esta no funciona -----> closes = get_closes(adjusted=True, freq='d')
-
-
     q_obj= cQuant(closes)
 
 
