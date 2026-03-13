@@ -24,7 +24,6 @@ from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 # ── Data fetching ──────────────────────────────────────────────────────────────
 
 
-#las funciones definidas aqui tienen un cache de 5 minutos
 
 #def get_closes(adjusted=True, freq='d'):
     #try:
