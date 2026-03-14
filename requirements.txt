@@ -6,6 +6,7 @@ plotly>=5.20.0
 matplotlib
 seaborn
 Jinja2
+numpy
 
 git+ssh://git@github.com/pjseoane/pjs_qlab.git
 #git+https://github.com/pjseoane/pjs_qlab.git

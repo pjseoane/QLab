@@ -5,7 +5,11 @@ import os
 from datetime import timedelta,datetime
 
 import plotly.graph_objects as go
-from utils.funcs import load_portfolios
+
+import numpy as np
+
+import utils.funcs
+from utils.funcs import * #load_portfolios, plot_heat, plot_heat2
 
 #sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -172,7 +176,7 @@ tab1, tab2, tab3, Portfolio = st.tabs(["📊 Charts & Datasets", "⚖️ Compari
 # ════════════════════════════════════════════════════════════════════════════════
 with (tab1): #Datasets
     # if downloaded:
-    tab_chart,tab_dataframe, tab_correlations =st.tabs(["Chart", "Dataframe","Correlations"])
+    tab_chart,tab_dataframe =st.tabs(["Chart", "Dataframe"])
 
     display_df = closes.copy()
     format_y_axis_as_pct = False
@@ -320,27 +324,6 @@ with (tab1): #Datasets
                 column_order=tickers,  # reorder columns shown
             )
 
-    with tab_correlations:
-        st.subheader('Log returns')
-        display_df=quant.get_log_returns_corr_matrix()
-
-        st.dataframe(
-            display_df.style.background_gradient(cmap='coolwarm'),
-            #.format(formatter=format, subset=tickers),
-            # .background_gradient(subset=tickers, cmap="RdYlGn")
-            # .background_gradient(subset=tickers, cmap="RdYlGn"),
-            # .highlight_max(subset=tickers, color="lightgreen")
-            # .highlight_min(subset=tickers, color="salmon"),
-
-            width=600,
-            height=400,
-            #hide_index=False,  # hide the index column
-            #column_order=tickers,  # reorder columns shown
-        )
-
-
-
-
 
 
 with (Portfolio):
@@ -352,7 +335,25 @@ with (Portfolio):
 
 
 
-    tab1, tab2 = st.tabs(['Chart','Dataframe'])
+    tab1, tab2 = st.tabs(['Correlation','z-Score'])
+
+
+    with tab1:
+        col1,col2 = st.columns(2)
+
+        with col1:
+            st.subheader('Log returns')
+            display_df=quant.get_log_returns_corr_matrix()
+
+            st.dataframe(
+                display_df.style.background_gradient(cmap='coolwarm'),
+                width=600,
+            )
+        with col2:
+            st.subheader('Log returns')
+            st.pyplot(plot_heat(display_df), width='stretch' )
+
+
 
 
 
