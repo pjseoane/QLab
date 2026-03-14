@@ -63,9 +63,10 @@ with st.sidebar:
 
     with st.expander("Portfolio Selector", icon=":material/analytics:", expanded=False):
         #tickers = {}
-        path_to_csv=  st.text_input('Path to CSV', value="C:\\Users\\pauli\\Downloads\\Model Portfolios - Export.csv")
-
-
+        #path_to_csv=  st.text_input('Path to CSV', value="C:\\Users\\pauli\\PyCharmProjects\\QLab\\Portfolios\\Model Portfolios - Export.csv")
+        file = st.text_input('Name of CSV',
+                                    value="Portfolios.csv")
+        path_to_csv="./Portfolios/"+file
         portfolios: dict = load_portfolios(path_to_csv)
 
         selected_watchlist = st.selectbox("Select Pack", list(portfolios.keys()))
@@ -74,8 +75,6 @@ with st.sidebar:
 
         for ticker, weight in weights.items():
            st.caption(f"{ticker}: {weight:.0%}")
-
-
 
 
     with st.expander("Tickers", icon=":material/playlist_add_check:",expanded=True):
@@ -162,7 +161,7 @@ with st.spinner("Fetching data..."):
 
     y_obj = get_yFinance_obj_from_API(tickers, period=period, interval=interval)
     closes = y_obj.get_close(adjusted=True, freq='d')
-    q_obj= cQuant(closes)
+    quant= cQuant(closes)
 
 
 
@@ -192,44 +191,44 @@ with (tab1): #Datasets
     elif show_dataset == 'Cumulative Returns':
 
         format_y_axis_as_pct = True
-        display_df = q_obj.get_cum_returns('d')
+        display_df = quant.get_cum_returns('d')
 
 
     elif show_dataset == 'Returns':
 
         format_y_axis_as_pct = True
-        display_df = q_obj.get_pct_returns('d')
+        display_df = quant.get_pct_returns('d')
 
     elif show_dataset == 'Log Returns':
 
         format_y_axis_as_pct = True
-        display_df = q_obj.get_log_returns('d')
+        display_df = quant.get_log_returns('d')
 
     elif show_dataset == 'Rebase':
         format_y_axis_as_pct = True
-        display_df = q_obj.get_rebase('d')
+        display_df = quant.get_rebase('d')
 
     elif show_dataset == 'Largest pct drop':
         format_y_axis_as_pct = True
         days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-        display_df = q_obj.get_largest_pct_drop(days)
+        display_df = quant.get_largest_pct_drop(days)
 
     elif show_dataset == 'Largest pct rise':
         format_y_axis_as_pct = True
         days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-        display_df = q_obj.get_largest_pct_rise(days)
+        display_df = quant.get_largest_pct_rise(days)
 
     elif show_dataset == 'Historic Volatility':
         format_y_axis_as_pct = True,
         days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
-        display_df = q_obj.get_hist_vlt_series(days)
+        display_df = quant.get_hist_vlt_series(days)
 
 
     elif show_dataset == 'Summary':
         format_y_axis_as_pct = True,
 
         st.subheader(show_dataset)
-        output_df = q_obj.get_summary(freq='ME')
+        output_df = quant.get_summary(freq='ME')
 
         st.dataframe(
 

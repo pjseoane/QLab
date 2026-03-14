@@ -1,0 +1,99 @@
+Pack,Ticker,Wgt
+ETF Selection,ACWI,0.25
+ETF Selection,SLV,0.25
+ETF Selection,GLD,0.25
+ETF Selection,XLF,0.25
+AI Ecosystem,VST,0.1667
+AI Ecosystem,VRT,0.1667
+AI Ecosystem,NRG,0.1667
+AI Ecosystem,GEV,0.1667
+AI Ecosystem,ETN,0.1667
+AI Ecosystem,EME,0.1667
+C Wood Health,RXRX,0.2
+C Wood Health,CRSP,0.2
+C Wood Health,TEM,0.2
+C Wood Health,TWST,0.2
+C Wood Health,BEAM,0.2
+Crypto Complex,COIN,0.3333
+Crypto Complex,IBIT,0.3333
+Crypto Complex,ETHA,0.3333
+Dollar Hedge,SLV,0.35
+Dollar Hedge,GLD,0.35
+Dollar Hedge,IBIT,0.3
+Global Equity,SPY,0.3
+Global Equity,ACWI,0.1
+Global Equity,GRNY,0.1
+Global Equity,XLF,0.1
+Global Equity,IBIT,0.1
+Global Equity,TSLA,0.05
+Global Equity,GOOGL,0.05
+Global Equity,CSCO,0.05
+Global Equity,WMT,0.05
+Global Equity,MCD,0.05
+Global Equity,NVDA,0.05
+Int. Artificial,URA,0.125
+Int. Artificial,ASML,0.125
+Int. Artificial,ARM,0.125
+Int. Artificial,TSM,0.125
+Int. Artificial,NVDA,0.125
+Int. Artificial,MSFT,0.125
+Int. Artificial,META,0.125
+Int. Artificial,GOOGL,0.125
+Nuclear,ASPN,0.1429
+Nuclear,ERII,0.1429
+Nuclear,ELVA,0.1429
+Nuclear,PLUG,0.1429
+Nuclear,SMR,0.1429
+Nuclear,OKLO,0.1429
+Nuclear,HASI,0.1429
+NVDA Portfolio,WRD,0.2
+NVDA Portfolio,NBIS,0.2
+NVDA Portfolio,RXRX,0.2
+NVDA Portfolio,APLD,0.2
+NVDA Portfolio,ARM,0.2
+Quant Selection - Q3 2025,PM,0.2
+Quant Selection - Q3 2025,NVDA,0.25
+Quant Selection - Q3 2025,IBM,0.13
+Quant Selection - Q3 2025,GE,0.11
+Quant Selection - Q3 2025,JPM,0.06
+Quant Selection - Q3 2025,WMT,0.25
+Quant Selection -2025,PM,0.07
+Quant Selection -2025,NVDA,0.2
+Quant Selection -2025,IBM,0.05
+Quant Selection -2025,GE,0.05
+Quant Selection -2025,LLY,0.25
+Quant Selection -2025,ABBV,0.13
+Quant Selection -2025,COST,0.19
+Quant Selection -2025,TMUS,0.06
+Quant Selection Total,PM,0.2
+Quant Selection Total,NVDA,0.25
+Quant Selection Total,IBM,0.13
+Quant Selection Total,GE,0.11
+Quant Selection Total,JPM,0.06
+Quant Selection Total,WMT,0.25
+S Alpha-Best AI,DOCU,0.2
+S Alpha-Best AI,PRLB,0.2
+S Alpha-Best AI,CLS,0.2
+S Alpha-Best AI,TWLO,0.2
+S Alpha-Best AI,FRSH,0.2
+Semiconductores,NVDA,0.1667
+Semiconductores,AVGO,0.1667
+Semiconductores,ASML,0.1667
+Semiconductores,AMD,0.1667
+Semiconductores,QCOM,0.1667
+Semiconductores,TSMC,0.1667
+Trump Industrials,AME,0.25
+Trump Industrials,ETN,0.25
+Trump Industrials,GEV,0.25
+Trump Industrials,ROK,0.25
+Witmer 2025,SPRY,0.2
+Witmer 2025,DLTR,0.2
+Witmer 2025,EPD,0.2
+Witmer 2025,JBTM,0.2
+Witmer 2025,OI,0.2
+Quant Selection - Q4 2025,PM,0.12
+Quant Selection - Q4 2025,NVDA,0.3
+Quant Selection - Q4 2025,IBM,0.1
+Quant Selection - Q4 2025,GE,0.16
+Quant Selection - Q4 2025,JPM,0.11
+Quant Selection - Q4 2025,VST,0.21
