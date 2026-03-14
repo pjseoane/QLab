@@ -112,7 +112,6 @@ with st.sidebar:
                                      'Largest pct drop',
                                      'Largest pct rise',
                                      'Historic Volatility',
-                                     'Summary',
 
                                      ])
 
@@ -173,16 +172,11 @@ tab1, tab2, tab3, Portfolio = st.tabs(["📊 Charts & Datasets", "⚖️ Compari
 # ════════════════════════════════════════════════════════════════════════════════
 with (tab1): #Datasets
     # if downloaded:
-    tab_chart,tab_dataframe =st.tabs(["Chart", "Dataframe"])
+    tab_chart,tab_dataframe, tab_correlations =st.tabs(["Chart", "Dataframe","Correlations"])
 
     display_df = closes.copy()
     format_y_axis_as_pct = False
     format = "{:.2%}"
-
-    #if show_dataset == 'Closes':
-    #    format = "{:.2f}"
-    #else:
-
 
     if show_dataset == 'Closes':
         format_y_axis_as_pct = False
@@ -224,22 +218,23 @@ with (tab1): #Datasets
         display_df = quant.get_hist_vlt_series(days)
 
 
-    elif show_dataset == 'Summary':
-        format_y_axis_as_pct = True,
+    #elif show_dataset == 'Summary':
+    #    format_y_axis_as_pct = True,
 
-        st.subheader(show_dataset)
-        output_df = quant.get_summary(freq='ME')
+    #    st.subheader(show_dataset)
+    #    output_df = quant.get_summary(freq='ME')
 
-        st.dataframe(
+    #    st.dataframe(
 
-            (output_df  # .style.format("{:.2%}")
+    #        (output_df  # .style.format("{:.2%}")
              # .background_gradient( cmap="RdYlGn")
              # .highlight_max(color="lightgreen")
              # .highlight_min(color="salmon")
-             )
+    #        )
             # column_order=tickers,  # reorder columns shown
 
-        )
+    #    )
+
 
     with tab_chart:#Charts
         try:
@@ -324,6 +319,29 @@ with (tab1): #Datasets
                 hide_index=False,  # hide the index column
                 column_order=tickers,  # reorder columns shown
             )
+
+    with tab_correlations:
+        st.subheader('Log returns')
+        display_df=quant.get_log_returns_corr_matrix()
+
+        st.dataframe(
+            display_df.style.background_gradient(cmap='coolwarm'),
+            #.format(formatter=format, subset=tickers),
+            # .background_gradient(subset=tickers, cmap="RdYlGn")
+            # .background_gradient(subset=tickers, cmap="RdYlGn"),
+            # .highlight_max(subset=tickers, color="lightgreen")
+            # .highlight_min(subset=tickers, color="salmon"),
+
+            width=600,
+            height=400,
+            #hide_index=False,  # hide the index column
+            #column_order=tickers,  # reorder columns shown
+        )
+
+
+
+
+
 
 with (Portfolio):
 
