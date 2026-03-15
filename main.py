@@ -4,12 +4,7 @@ import sys
 import os
 from datetime import timedelta,datetime
 
-import plotly.graph_objects as go
-
-import numpy as np
-
-import utils.funcs
-from utils.funcs import * #load_portfolios, plot_heat, plot_heat2
+from utils.funcs import *
 
 #sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -63,13 +58,12 @@ st.markdown("""
 
 # ── Sidebar controls ───────────────────────────────────────────────────────────
 with st.sidebar:
-    st.header("⚙️ Settings/Load Portfolios")
+    st.header("⚙️ Settings")
 
-    with st.expander("Portfolio Selector", icon=":material/analytics:", expanded=False):
+    with st.expander("Load Portfolios", icon=":material/analytics:", expanded=False):
         #tickers = {}
         #path_to_csv=  st.text_input('Path to CSV', value="C:\\Users\\pauli\\PyCharmProjects\\QLab\\Portfolios\\Model Portfolios - Export.csv")
-        file = st.text_input('Name of CSV',
-                                    value="Portfolios.csv")
+        file = st.text_input('Filename', value="Portfolios.csv")
         path_to_csv="./Portfolios/"+file
         portfolios: dict = load_portfolios(path_to_csv)
 
@@ -81,7 +75,7 @@ with st.sidebar:
            st.caption(f"{ticker}: {weight:.0%}")
 
 
-    with st.expander("Tickers", icon=":material/playlist_add_check:",expanded=True):
+    #with st.expander("Tickers", icon=":material/playlist_add_check:",expanded=True):
 
         tickers_input = st.text_input(
             "Tickers (comma-separated)",
@@ -91,7 +85,7 @@ with st.sidebar:
         )
         tickers = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
 
-    with st.expander('Period', icon=":material/playlist_add_check:",expanded=False):
+    #with st.expander('Period', icon=":material/playlist_add_check:",expanded=False):
         col1, col2 = st.columns(2)
 
         with col1:
@@ -105,7 +99,24 @@ with st.sidebar:
                 help="Candle / data point size"
             )
 
-    with st.expander('Datasets', icon=":material/dataset:", expanded=False):
+    if st.sidebar.button("Refresh Data", icon=":material/refresh:"):
+        st.cache_resource.clear()
+        st.toast("Cache cleared! Fetching fresh data...", icon="✅")
+        st.session_state["last_refresh"] = datetime.now().strftime("%H:%M:%S")
+
+        with st.spinner("Fetching data..."):
+            y_obj = get_yFinance_obj_from_API(tickers, period=period, interval=interval)
+            closes = y_obj.get_close(adjusted=True, freq='d')
+            quant = cQuant(closes)
+
+            # downloaded=True
+
+            st.rerun()
+        # This persists across reruns
+    if "last_refresh" in st.session_state:
+        st.sidebar.caption(f"Last refreshed at {st.session_state['last_refresh']}")
+
+    with st.expander('Charts & Datasets', icon=":material/dataset:", expanded=False):
 
             show_dataset = st.radio("Show Datasets",
                                     ['Closes',
@@ -116,6 +127,9 @@ with st.sidebar:
                                      'Largest pct drop',
                                      'Largest pct rise',
                                      'Historic Volatility',
+                                     'z-Score',
+                                     'Sharpe Ratio',
+                                     'Sortino Ratio',
 
                                      ])
 
@@ -140,20 +154,6 @@ with st.sidebar:
 
 
 
-    st.divider()
-    #downloaded=False
-    if st.sidebar.button("Refresh Data", icon=":material/refresh:"):
-        st.cache_resource.clear()
-        st.toast("Cache cleared! Fetching fresh data...", icon="✅")
-        st.session_state["last_refresh"] = datetime.now().strftime("%H:%M:%S")
-
-
-        #downloaded=True
-
-        st.rerun()
-    # This persists across reruns
-    if "last_refresh" in st.session_state:
-        st.sidebar.caption(f"Last refreshed at {st.session_state['last_refresh']}")
 
 
 
@@ -174,7 +174,7 @@ tab1, tab2, tab3, Portfolio = st.tabs(["📊 Charts & Datasets", "⚖️ Compari
 # ════════════════════════════════════════════════════════════════════════════════
 # TAB 1 — Price Charts (one per ticker)
 # ════════════════════════════════════════════════════════════════════════════════
-with (tab1): #Datasets
+with (((tab1))): #Datasets
     # if downloaded:
     tab_chart,tab_dataframe =st.tabs(["Chart", "Dataframe"])
 
@@ -221,27 +221,32 @@ with (tab1): #Datasets
         days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
         display_df = quant.get_hist_vlt_series(days)
 
+    elif show_dataset == 'z-Score':
+        format_y_axis_as_pct = False
+        days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
+        display_df = quant.get_zScore_series(days)
+        format = "{:.2f}"
 
-    #elif show_dataset == 'Summary':
-    #    format_y_axis_as_pct = True,
 
-    #    st.subheader(show_dataset)
-    #    output_df = quant.get_summary(freq='ME')
+    elif show_dataset == 'Sharpe Ratio':
+        format_y_axis_as_pct = False
+        days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
+        display_df = quant.get_sharpe_series(days)
+        format = "{:.2f}"
 
-    #    st.dataframe(
+    elif show_dataset == 'Sortino Ratio':
 
-    #        (output_df  # .style.format("{:.2%}")
-             # .background_gradient( cmap="RdYlGn")
-             # .highlight_max(color="lightgreen")
-             # .highlight_min(color="salmon")
-    #        )
-            # column_order=tickers,  # reorder columns shown
-
-    #    )
+            days = st.number_input('days', min_value=1, max_value=500, value=30, step=1)
+            format_y_axis_as_pct = False
+            format_y_axis_as_pct = False
+            display_df = quant.get_sortino_series(days)
+            format = "{:.2f}"
 
 
     with tab_chart:#Charts
+
         try:
+
             fig = go.Figure()
 
             for ticker in display_df:
@@ -323,6 +328,7 @@ with (tab1): #Datasets
                 hide_index=False,  # hide the index column
                 column_order=tickers,  # reorder columns shown
             )
+
 
 
 
