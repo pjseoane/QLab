@@ -1,5 +1,5 @@
 # pip install -r requirements.txt
-streamlit>=1.35.0
+streamlit>=1.37.1
 yfinance>=0.2.37
 pandas>=2.0.0
 plotly>=5.20.0
@@ -10,4 +10,4 @@ numpy
 
 git+ssh://git@github.com/pjseoane/pjs_qlab.git
 #git+https://github.com/pjseoane/pjs_qlab.git
-#external_libs/pjs_qlab-0.2.1-py3-none-any.whl
+#data/pjs_qlab-0.2.1-py3-none-any.whl

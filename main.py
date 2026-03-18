@@ -8,7 +8,7 @@ from utils.funcs import *
 
 #sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-#import from external_libs
+#import from data
 from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
 from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 

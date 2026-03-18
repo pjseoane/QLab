@@ -4,7 +4,7 @@ LABEL authors="pauli"
 WORKDIR /app
 
 COPY requirements.txt .
-#COPY external_libs/pjs_qlab-0.2.1-py3-none-any.whl .
+#COPY data/pjs_qlab-0.2.1-py3-none-any.whl .
 #RUN pip install pjs_qlab-0.2.1-py3-none-any.whl
 RUN pip install --no-cache-dir -r requirements.txt
 
