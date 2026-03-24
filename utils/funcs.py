@@ -4,6 +4,16 @@ import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
+
+#import from data
+from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
+from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
+
+
+
+
+
 def load_portfolios (fileCSV) -> dict:
     df = pd.read_csv(fileCSV)
     output={}

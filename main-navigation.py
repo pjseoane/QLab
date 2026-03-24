@@ -1,5 +1,10 @@
 import streamlit as st
 
+
+
+
+
+
 home    = st.Page("pages/home.py", title="Home", icon=":material/home:")
 dashboard  = st.Page("pages/dashboard.py", title="Dashboard", icon="📊")
 ticker   = st.Page("pages/single_ticker.py", title="Ticker", icon="⚙️")
