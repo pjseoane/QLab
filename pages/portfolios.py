@@ -100,18 +100,14 @@ with st.sidebar:
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
 if downloaded:
- closes, returns, c_returns, log_returns, rebase, lp_drop,lp_rise, hist_vlt, zscore, sharpe, sortino  = st.tabs([
+ closes, returns, rebase, drop_rise, hist_vlt, ratios, pyPortfolio  = st.tabs([
     "Closes",
     "Returns",
-    "Cumulative Returns",
-    "Log Returns",
     "Rebase",
-    "Largest Pct Drop",
-    "Large Pct Rise",
+    "Drop & Rises",
     "Historic Volatility",
-    "z-Score",
-    "Sharpe",
-    "Sortino",
+    "Ratios",
+    "pyPortfolio",
 ])
 
  with closes:
@@ -128,14 +124,14 @@ if downloaded:
      format_y_axis_as_pct = True
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
- with c_returns:
+ #with c_returns:
      display_df = quant.get_cum_returns('d')
      title = 'Cumulative Returns'
      format = "{:.2%}"
      format_y_axis_as_pct = True
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
- with log_returns:
+ #with log_returns:
      display_df = quant.get_log_returns('d')
      title = 'Log Returns'
      format = "{:.2%}"
@@ -149,14 +145,14 @@ if downloaded:
      format_y_axis_as_pct = False
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
- with lp_drop:
+ with drop_rise:
     display_df = quant.get_largest_pct_drop(days)
     title = 'Largest Pct Drop'
     format = "{:.2%}"
     format_y_axis_as_pct = True
     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
- with lp_rise:
+ #with lp_rise:
     display_df = quant.get_largest_pct_rise(days)
     title = 'Largest Pct Rise'
     format = "{:.2%}"
@@ -170,25 +166,28 @@ if downloaded:
      format_y_axis_as_pct = True
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
- with zscore:
+ with ratios:
      display_df = quant.get_zScore_series(days)
      title = 'z-Score'
      format = "{:.2%}"
      format_y_axis_as_pct = False
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
- with sharpe:
+ #with sharpe:
      display_df = quant.get_sharpe_series(days)
      title = 'Sharpe Ratio'
      format = "{:.2%}"
      format_y_axis_as_pct = False
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
- with sortino:
+ #with sortino:
      display_df = quant.get_sortino_series(days)
      title = 'Sortino Ratio'
      format = "{:.2%}"
      format_y_axis_as_pct = False
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+
+ with pyPortfolio:
+     pass
 
 
