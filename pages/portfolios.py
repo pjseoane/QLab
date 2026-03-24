@@ -174,21 +174,21 @@ if downloaded:
      display_df = quant.get_zScore_series(days)
      title = 'z-Score'
      format = "{:.2%}"
-     format_y_axis_as_pct = True
+     format_y_axis_as_pct = False
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
  with sharpe:
      display_df = quant.get_sharpe_series(days)
      title = 'Sharpe Ratio'
      format = "{:.2%}"
-     format_y_axis_as_pct = True
+     format_y_axis_as_pct = False
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
  with sortino:
      display_df = quant.get_sortino_series(days)
      title = 'Sortino Ratio'
      format = "{:.2%}"
-     format_y_axis_as_pct = True
+     format_y_axis_as_pct = False
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
 
