@@ -78,8 +78,10 @@ with st.sidebar:
                 help="Candle / data point size"
             )
 
+        days = st.number_input('Window days', min_value=1, max_value=500, value=30, step=1)
+
     if st.sidebar.button("Refresh Data", icon=":material/refresh:"):
-       # if downloaded:
+        if not downloaded:
             st.cache_resource.clear()
             st.toast("Cache cleared! Fetching fresh data...", icon="✅")
             st.session_state["last_refresh"] = datetime.now().strftime("%H:%M:%S")
@@ -89,33 +91,104 @@ with st.sidebar:
                 closes = y_obj.get_close(adjusted=True, freq='d')
                 quant = cQuant(closes)
 
-            #    downloaded = True
-                st.rerun()
+                downloaded = True
+                #st.rerun()
 
     if "last_refresh" in st.session_state:
         st.sidebar.caption(f"Last refreshed at {st.session_state['last_refresh']}")
 
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4 = st.tabs([
-    "⚖️ Comparison",
-    "📊 Performance",
-    "🔥 Correlation",
-    "💼 Weights",
+if downloaded:
+ closes, returns, c_returns, log_returns, rebase, lp_drop,lp_rise, hist_vlt, zscore, sharpe, sortino  = st.tabs([
+    "Closes",
+    "Returns",
+    "Cumulative Returns",
+    "Log Returns",
+    "Rebase",
+    "Largest Pct Drop",
+    "Large Pct Rise",
+    "Historic Volatility",
+    "z-Score",
+    "Sharpe",
+    "Sortino",
 ])
 
-with tab1:
-    # normalised returns chart vs benchmark
-    pass
+ with closes:
+    display_df = quant.get_close(interval)
+    title = 'Closes'
+    format = "{:.2f}"
+    format_y_axis_as_pct = False
+    get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
-with tab2:
-    # return, volatility, sharpe, max drawdown table
-    pass
+ with returns:
+     display_df = quant.get_pct_returns('d')
+     title = ' Pct Returns'
+     format = "{:.2%}"
+     format_y_axis_as_pct = True
+     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
-with tab3:
-    # correlation heatmap triangle
-    pass
+ with c_returns:
+     display_df = quant.get_cum_returns('d')
+     title = 'Cumulative Returns'
+     format = "{:.2%}"
+     format_y_axis_as_pct = True
+     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
-with tab4:
-    # pie chart of weights from watchlist CSV
-    pass
+ with log_returns:
+     display_df = quant.get_log_returns('d')
+     title = 'Log Returns'
+     format = "{:.2%}"
+     format_y_axis_as_pct = True
+     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+
+ with rebase:
+     display_df = quant.get_rebase('d')
+     title='Rebase'
+     format = "{:.2f}"
+     format_y_axis_as_pct = False
+     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+
+ with lp_drop:
+    display_df = quant.get_largest_pct_drop(days)
+    title = 'Largest Pct Drop'
+    format = "{:.2%}"
+    format_y_axis_as_pct = True
+    get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+
+ with lp_rise:
+    display_df = quant.get_largest_pct_rise(days)
+    title = 'Largest Pct Rise'
+    format = "{:.2%}"
+    format_y_axis_as_pct = True
+    get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+
+ with hist_vlt:
+     display_df = quant.get_hist_vlt_series(days)
+     title = 'Historic Volatility'
+     format = "{:.2%}"
+     format_y_axis_as_pct = True
+     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+
+ with zscore:
+     display_df = quant.get_zScore_series(days)
+     title = 'z-Score'
+     format = "{:.2%}"
+     format_y_axis_as_pct = True
+     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+
+ with sharpe:
+     display_df = quant.get_sharpe_series(days)
+     title = 'Sharpe Ratio'
+     format = "{:.2%}"
+     format_y_axis_as_pct = True
+     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+
+ with sortino:
+     display_df = quant.get_sortino_series(days)
+     title = 'Sortino Ratio'
+     format = "{:.2%}"
+     format_y_axis_as_pct = True
+     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+
+
