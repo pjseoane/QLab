@@ -100,33 +100,32 @@ with st.sidebar:
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
 if downloaded:
- closes, returns, rebase, drop_rise, hist_vlt, ratios, pyPortfolio  = st.tabs([
-    "Closes",
-    "Returns",
+ returns, rebase, drop_rise, hist_vlt, ratios, pyPortfolio  = st.tabs([
+    "Price & Returns",
     "Rebase",
     "Drop & Rises",
-    "Historic Volatility",
+    "Volatility",
     "Ratios",
     "pyPortfolio",
 ])
 
- with closes:
-    display_df = quant.get_close(interval)
-    title = 'Closes'
-    format = "{:.2f}"
-    format_y_axis_as_pct = False
-    get_tab_chart(display_df, title, format, format_y_axis_as_pct)
-
  with returns:
-     display_df = quant.get_pct_returns('d')
-     title = ' Pct Returns'
+
+     display_df = quant.get_close(interval)
+     title = 'Closes'
+     format = "{:.2f}"
+     format_y_axis_as_pct = False
+     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+
+ # with c_returns:
+     display_df = quant.get_cum_returns('d')
+     title = 'Cumulative Returns'
      format = "{:.2%}"
      format_y_axis_as_pct = True
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
- #with c_returns:
-     display_df = quant.get_cum_returns('d')
-     title = 'Cumulative Returns'
+     display_df = quant.get_pct_returns('d')
+     title = ' Pct Returns'
      format = "{:.2%}"
      format_y_axis_as_pct = True
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
@@ -161,7 +160,7 @@ if downloaded:
 
  with hist_vlt:
      display_df = quant.get_hist_vlt_series(days)
-     title = 'Historic Volatility'
+     title = 'Volatility'
      format = "{:.2%}"
      format_y_axis_as_pct = True
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
