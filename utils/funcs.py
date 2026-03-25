@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
+import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
@@ -10,6 +11,8 @@ import streamlit as st
 #import from data
 from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
 from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
+from pjs_qlab.analytics.pyPortfolioClass import cPyPortfolio as cPyPortfolio
+
 
 
 

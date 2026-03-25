@@ -1,5 +1,6 @@
+import pandas as pd
 import streamlit as st
-from utils.funcs import * #load_portfolios
+from utils.funcs import *
 from datetime import timedelta,datetime
 
 
@@ -100,13 +101,14 @@ with st.sidebar:
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
 if downloaded:
- returns, rebase, drop_rise, hist_vlt, ratios, pyPortfolio  = st.tabs([
+ returns, rebase, drop_rise, hist_vlt, ratios, pyPortfolio, test  = st.tabs([
     "Price & Returns",
     "Rebase",
     "Drop & Rises",
     "Volatility",
     "Ratios",
     "pyPortfolio",
+    "test",
 ])
 
  with returns:
@@ -187,6 +189,93 @@ if downloaded:
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
  with pyPortfolio:
+     if benchmark == 'None':
+         port_closes = closes
+     else:
+         port_closes = closes.drop(columns=[bench_ticker])
+
+     port_Obj = cPyPortfolio(port_closes)
+     weights = port_Obj.get_weights()
+     col1, col2, col3 = st.columns(
+         [1, 2, 3],
+         gap="small",  # space between columns: "small", "medium", "large"
+         vertical_alignment="top"
+     )
+     col1.header("Weights")
+     col2.header("Pie Chart")
+     col3.header("Evolution")
+
+     with col1:
+
+         display_df = pd.DataFrame(list(weights.items()), columns=['Ticker', 'Weight'])
+         format = ({'Weight': '{:.2%}'})
+
+         st.dataframe(
+             display_df.style
+             .format(formatter=format, subset=display_df.columns.tolist()),
+             # .background_gradient(subset=tickers, cmap="RdYlGn")
+             # .background_gradient(subset=tickers, cmap="RdYlGn"),
+             # .highlight_max(subset=tickers, color="lightgreen")
+             # .highlight_min(subset=tickers, color="salmon"),
+
+             width=200,
+             height=400,
+             hide_index=False,  # hide the index column
+             column_order=display_df.columns.tolist(),  # reorder columns shown
+         )
+
+     with col2:
+         fig = px.pie(values=list(weights.values()), names=list(weights.keys()), title='Distribution')
+         fig.update_layout(
+             autosize=True,  # ignores width/height, fills container
+             margin=dict(l=50, r=50, t=40, b=20)  # control margins too
+         )
+         st.plotly_chart(fig, theme='streamlit', width='stretch')
+         # fig.show()
+
+     with col3:
+         display_df = pd.DataFrame(port_Obj.get_portfolo_cumulative_returns())
+         display_df.columns = ["Portfolio"]
+
+         if benchmark == 'None':
+             display_df["Benchmark"] =1
+         else:
+             display_df[bench_ticker] = closes[bench_ticker]/closes[bench_ticker].iloc[0]
+
+         #
+         format = "{:.4f}"
+
+         evolution, dataframe,  = st.tabs([
+             "Evolution",
+             "Dataframe",
+         ])
+
+         with evolution:
+             title="Portfolio & Benchmark"
+             charts(display_df, format, title, format_y_axis_as_pct=False)
+
+         with dataframe:
+             display_df.index = display_df.index.strftime("%Y-%m-%d")
+             st.dataframe(
+                 display_df.style
+                .format(formatter=format, subset=display_df.columns.tolist())
+                #.background_gradient(cmap="RdYlGn")
+                .highlight_max(color="lightgreen")
+                .highlight_min(color="salmon"),
+
+                 width=400,
+                 height=200,
+                 hide_index=False,  # hide the index column
+                 #column_order=display_df.columns.tolist(),  # reorder columns shown
+             )
+
+ with test:
      pass
+
+
+
+
+
+
 
 
