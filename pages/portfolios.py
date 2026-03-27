@@ -56,7 +56,7 @@ with st.sidebar:
             st.caption(f"{ticker}: {weight:.0%}")
 
 
-    with st.expander("Select Benchmark", icon=":material/check_box:", expanded=False):
+    with st.expander("Benchmark", icon=":material/check_box:", expanded=False):
         #bench = st.multiselect("Benchmark", BENCHMARKS, default=BENCHMARKS)
         benchmark = st.selectbox("Benchmark", list(BENCHMARKS.keys()))
         bench_ticker= BENCHMARKS[benchmark]
@@ -113,11 +113,7 @@ if downloaded:
 
  with returns:
 
-     display_df = quant.get_close(interval)
-     title = 'Closes'
-     format = "{:.2f}"
-     format_y_axis_as_pct = False
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+
 
  # with c_returns:
      display_df = quant.get_cum_returns('d')
@@ -137,6 +133,12 @@ if downloaded:
      title = 'Log Returns'
      format = "{:.2%}"
      format_y_axis_as_pct = True
+     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+
+     display_df = quant.get_close(interval)
+     title = 'Closes'
+     format = "{:.2f}"
+     format_y_axis_as_pct = False
      get_tab_chart(display_df, title, format, format_y_axis_as_pct)
 
  with rebase:
@@ -232,6 +234,8 @@ if downloaded:
          )
          st.plotly_chart(fig, theme='streamlit', width='stretch')
          # fig.show()
+
+
 
      with col3:
          display_df = pd.DataFrame(port_Obj.get_portfolo_cumulative_returns())
