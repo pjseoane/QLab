@@ -92,6 +92,7 @@ with st.sidebar:
                 closes = y_obj.get_close(adjusted=True, freq='d')
                 quant = cQuant(closes)
 
+
                 downloaded = True
                 #st.rerun()
 
@@ -117,76 +118,77 @@ if downloaded:
      title = 'Closes'
      format = "{:.2f}"
      format_y_axis_as_pct = False
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
+
 
  # with c_returns:
      display_df = quant.get_cum_returns('d')
      title = 'Cumulative Returns'
      format = "{:.2%}"
      format_y_axis_as_pct = True
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
      display_df = quant.get_pct_returns('d')
      title = ' Pct Returns'
      format = "{:.2%}"
      format_y_axis_as_pct = True
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  #with log_returns:
      display_df = quant.get_log_returns('d')
      title = 'Log Returns'
      format = "{:.2%}"
      format_y_axis_as_pct = True
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  with rebase:
      display_df = quant.get_rebase('d')
      title='Rebase'
      format = "{:.2f}"
      format_y_axis_as_pct = False
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  with drop_rise:
     display_df = quant.get_largest_pct_drop(days)
     title = 'Largest Pct Drop'
     format = "{:.2%}"
     format_y_axis_as_pct = True
-    get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+    get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  #with lp_rise:
     display_df = quant.get_largest_pct_rise(days)
     title = 'Largest Pct Rise'
     format = "{:.2%}"
     format_y_axis_as_pct = True
-    get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+    get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  with hist_vlt:
      display_df = quant.get_hist_vlt_series(days)
      title = 'Volatility'
      format = "{:.2%}"
      format_y_axis_as_pct = True
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  with ratios:
      display_df = quant.get_zScore_series(days)
      title = 'z-Score'
      format = "{:.2%}"
      format_y_axis_as_pct = False
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  #with sharpe:
      display_df = quant.get_sharpe_series(days)
      title = 'Sharpe Ratio'
      format = "{:.2%}"
      format_y_axis_as_pct = False
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  #with sortino:
      display_df = quant.get_sortino_series(days)
      title = 'Sortino Ratio'
      format = "{:.2%}"
      format_y_axis_as_pct = False
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  with pyPortfolio:
      if benchmark == 'None':
@@ -195,7 +197,7 @@ if downloaded:
          port_closes = closes.drop(columns=[bench_ticker])
 
      port_Obj = cPyPortfolio(port_closes)
-     weights = port_Obj.get_weights()
+     weights = port_Obj.get_weightsHRP()
      col1, col2, col3 = st.columns(
          [1, 2, 3],
          gap="small",  # space between columns: "small", "medium", "large"
@@ -234,7 +236,7 @@ if downloaded:
          # fig.show()
 
      with col3:
-         display_df = pd.DataFrame(port_Obj.get_portfolo_cumulative_returns())
+         display_df = pd.DataFrame(port_Obj.get_cumulative_returns(weights))
          display_df.columns = ["Portfolio"]
 
          if benchmark == 'None':

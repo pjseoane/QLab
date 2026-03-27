@@ -11,10 +11,7 @@ import streamlit as st
 #import from data
 from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
 from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
-from pjs_qlab.analytics.pyPortfolioClass import cPyPortfolio as cPyPortfolio
-
-
-
+from pjs_qlab.analytics.cPyPortfolio import PyPortfolio as cPyPortfolio
 
 
 
@@ -55,7 +52,7 @@ def plot_heat(log_returns):
         )
 
         return fig
-
+"""
 def charts(display_df, format, title='Title', format_y_axis_as_pct=False):
     fig = go.Figure()
 
@@ -114,7 +111,7 @@ def charts(display_df, format, title='Title', format_y_axis_as_pct=False):
 
     # fig.update_layout(width=800, height=500)
     st.plotly_chart(fig, theme='streamlit', width='stretch')
-
+"""
 
 def show_dataframe(display_df, format):
     display_df.index = display_df.index.strftime("%Y-%m-%d")
@@ -133,19 +130,35 @@ def show_dataframe(display_df, format):
         )
 
 
-def get_tab_chart(display_df, title, format_df, format_y_axis_as_pct):
+#def get_tab_chart(display_df, title, format_df, format_y_axis_as_pct):
+#    tab_chart, tab_dataframe = st.tabs(["Chart", "Dataframe"])
+
+#    with tab_chart:  # Charts
+
+#        try:
+#            charts(display_df, format_df, title, format_y_axis_as_pct)
+
+#        except:
+#            st.write('Some problem with tickers...')
+
+#    with tab_dataframe:  # Dataframe
+
+#        st.subheader(title)
+#        show_dataframe(display_df, format_df)
+
+
+def get_tab_chart2(quant_obj, display_df, title, format, format_y_axis_as_pct ):
     tab_chart, tab_dataframe = st.tabs(["Chart", "Dataframe"])
 
     with tab_chart:  # Charts
 
         try:
-            charts(display_df, format_df, title, format_y_axis_as_pct)
-
+            fig=quant_obj.charter_pd(display_df, format, title, format_y_axis_as_pct)
+            st.plotly_chart(fig, theme='streamlit', width='stretch')
         except:
             st.write('Some problem with tickers...')
 
     with tab_dataframe:  # Dataframe
 
         st.subheader(title)
-        show_dataframe(display_df, format_df)
-
+        show_dataframe(display_df, format)
