@@ -1,0 +1,37 @@
+Pack,Ticker,Wgt
+Commodities,DE,0.2500
+Commodities,BG,0.2500
+Commodities,VALE,0.2500
+Commodities,FCX,0.2500
+Semiconductores,NVDA,0.1667
+Semiconductores,AVGO,0.1667
+Semiconductores,ASML,0.1667
+Semiconductores,AMD,0.1667
+Semiconductores,QCOM,0.1667
+Semiconductores,TSM,0.1667
+Crypto Complex,COIN,0.3333
+Crypto Complex,IBIT,0.3333
+Crypto Complex,ETHA,0.3333
+Dollar Hedge,SLV,0.3500
+Dollar Hedge,GLD,0.3500
+Dollar Hedge,IBIT,0.3000
+New AI,URA,0.1250
+New AI,ASML,0.1250
+New AI,ARM,0.1250
+New AI,TSM,0.1250
+New AI,NVDA,0.1250
+New AI,MSFT,0.1250
+New AI,META,0.1250
+New AI,GOOGL,0.1250
+ETF Selection,ACWI,0.2500
+ETF Selection,XLF,0.2500
+ETF Selection,GLD,0.2500
+ETF Selection,SLV,0.2500
+Quant Selection - Q1 2026,GE,0.1200
+Quant Selection - Q1 2026,RTX,0.0700
+Quant Selection - Q1 2026,WFC,0.0600
+Quant Selection - Q1 2026,CAT,0.1200
+Quant Selection - Q1 2026,NVDA,0.1800
+Quant Selection - Q1 2026,WMT,0.1500
+Quant Selection - Q1 2026,GOOGL,0.2000
+Quant Selection - Q1 2026,IBM,0.1000
