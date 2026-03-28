@@ -1,15 +1,15 @@
-FROM python:3.13-slim
+FROM python:3.12-slim
 LABEL authors="pauli"
 
 WORKDIR /app
 
-COPY requirements.txt .
-#COPY data/pjs_qlab-0.2.1-py3-none-any.whl .
-#RUN pip install pjs_qlab-0.2.1-py3-none-any.whl
-RUN pip install --no-cache-dir -r requirements.txt
+COPY QLab/requirements.txt ./requirements.txt
+COPY pjs_qlab /pjs_qlab
+RUN python -m pip install --no-cache-dir --upgrade pip
+RUN python -m pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY QLab/ .
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "app/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "main.py", "--server.port=8501", "--server.address=0.0.0.0"]

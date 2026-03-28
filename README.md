@@ -1,14 +1,24 @@
-1- Install requirements:
+1- Create a Python 3.12 virtual environment to match `pjs_qlab`:
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 pip install -r requirements.txt
-pip install -e ../pjs_qlab
+```
 
 
 2- to build and run from container
-docker build -t streamlit_app .
+Make sure the Docker build context includes both `QLab` and the sibling `pjs_qlab` folder.
+```powershell
+cd ..
+docker build -f QLab/Dockerfile -t streamlit_app .
 docker run -p 8501:8501 streamlit_app
+```
 
 #to run alone
-streamlit run app/main.py
+```powershell
+streamlit run main.py
+```
 
 # 📈 Stock Market Dashboard
 
@@ -25,11 +35,11 @@ An interactive stock analysis and comparison dashboard built with Streamlit, yfi
 ## Quick Start
 
 ```bash
-# 1. Install dependencies
+# 1. Install dependencies in the Python 3.12 virtualenv
 pip install -r requirements.txt
 
 # 2. Run the app
-streamlit run app.py
+streamlit run main.py
 ```
 
 Then open http://localhost:8501 in your browser.
