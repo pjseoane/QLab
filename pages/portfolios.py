@@ -114,11 +114,7 @@ if downloaded:
 
  with returns:
 
-     display_df = quant.get_close(interval)
-     title = 'Closes'
-     format = "{:.2f}"
-     format_y_axis_as_pct = False
-     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
+
 
 
  # with c_returns:
@@ -139,6 +135,12 @@ if downloaded:
      title = 'Log Returns'
      format = "{:.2%}"
      format_y_axis_as_pct = True
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
+
+     display_df = quant.get_close(interval)
+     title = 'Closes'
+     format = "{:.2f}"
+     format_y_axis_as_pct = False
      get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  with rebase:
@@ -247,29 +249,30 @@ if downloaded:
          #
          format = "{:.4f}"
 
-         evolution, dataframe,  = st.tabs([
-             "Evolution",
-             "Dataframe",
-         ])
+         #evolution, dataframe,  = st.tabs([
+         #    "Evolution",
+         #    "Dataframe",
+         #])
 
-         with evolution:
-             title="Portfolio & Benchmark"
-             chartsssss(display_df, format, title, format_y_axis_as_pct=False)
+         #with evolution:
+         title="Portfolio & Benchmark"
+             #chartsssss(display_df, format, title, format_y_axis_as_pct=False)
+         get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
-         with dataframe:
-             display_df.index = display_df.index.strftime("%Y-%m-%d")
-             st.dataframe(
-                 display_df.style
-                .format(formatter=format, subset=display_df.columns.tolist())
-                #.background_gradient(cmap="RdYlGn")
-                .highlight_max(color="lightgreen")
-                .highlight_min(color="salmon"),
+        # with dataframe:
+        #     display_df.index = display_df.index.strftime("%Y-%m-%d")
+         #    st.dataframe(
+         #        display_df.style
+         #       .format(formatter=format, subset=display_df.columns.tolist())
+         #       #.background_gradient(cmap="RdYlGn")
+         #       .highlight_max(color="lightgreen")
+         #       .highlight_min(color="salmon"),
 
-                 width=400,
-                 height=200,
-                 hide_index=False,  # hide the index column
-                 #column_order=display_df.columns.tolist(),  # reorder columns shown
-             )
+          #       width=400,
+          #       height=200,
+          #       hide_index=False,  # hide the index column
+          #       #column_order=display_df.columns.tolist(),  # reorder columns shown
+          #   )
 
  with test:
      pass
