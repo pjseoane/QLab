@@ -1,8 +1,11 @@
-# TEST xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-import pandas as pd
-import streamlit as st
+
 from utils.funcs import *
 from datetime import timedelta,datetime
+
+#import from external API
+from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
+from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
+from pjs_qlab.analytics.cPyPortfolio import PyPortfolio as cPyPortfolio
 
 
 
@@ -57,7 +60,7 @@ with st.sidebar:
             st.caption(f"{ticker}: {weight:.0%}")
 
 
-    with st.expander("Benchmark", icon=":material/check_box:", expanded=False):
+    with st.expander("Select Benchmark", icon=":material/check_box:", expanded=False):
         #bench = st.multiselect("Benchmark", BENCHMARKS, default=BENCHMARKS)
         benchmark = st.selectbox("Benchmark", list(BENCHMARKS.keys()))
         bench_ticker= BENCHMARKS[benchmark]
@@ -93,6 +96,7 @@ with st.sidebar:
                 closes = y_obj.get_close(adjusted=True, freq='d')
                 quant = cQuant(closes)
 
+
                 downloaded = True
                 #st.rerun()
 
@@ -116,80 +120,81 @@ if downloaded:
 
 
 
+
  # with c_returns:
      display_df = quant.get_cum_returns('d')
      title = 'Cumulative Returns'
      format = "{:.2%}"
      format_y_axis_as_pct = True
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
      display_df = quant.get_pct_returns('d')
      title = ' Pct Returns'
      format = "{:.2%}"
      format_y_axis_as_pct = True
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  #with log_returns:
      display_df = quant.get_log_returns('d')
      title = 'Log Returns'
      format = "{:.2%}"
      format_y_axis_as_pct = True
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
      display_df = quant.get_close(interval)
      title = 'Closes'
      format = "{:.2f}"
      format_y_axis_as_pct = False
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  with rebase:
      display_df = quant.get_rebase('d')
      title='Rebase'
      format = "{:.2f}"
      format_y_axis_as_pct = False
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  with drop_rise:
     display_df = quant.get_largest_pct_drop(days)
     title = 'Largest Pct Drop'
     format = "{:.2%}"
     format_y_axis_as_pct = True
-    get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+    get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  #with lp_rise:
     display_df = quant.get_largest_pct_rise(days)
     title = 'Largest Pct Rise'
     format = "{:.2%}"
     format_y_axis_as_pct = True
-    get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+    get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  with hist_vlt:
      display_df = quant.get_hist_vlt_series(days)
      title = 'Volatility'
      format = "{:.2%}"
      format_y_axis_as_pct = True
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  with ratios:
      display_df = quant.get_zScore_series(days)
      title = 'z-Score'
      format = "{:.2%}"
      format_y_axis_as_pct = False
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  #with sharpe:
      display_df = quant.get_sharpe_series(days)
      title = 'Sharpe Ratio'
      format = "{:.2%}"
      format_y_axis_as_pct = False
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  #with sortino:
      display_df = quant.get_sortino_series(days)
      title = 'Sortino Ratio'
      format = "{:.2%}"
      format_y_axis_as_pct = False
-     get_tab_chart(display_df, title, format, format_y_axis_as_pct)
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
  with pyPortfolio:
      if benchmark == 'None':
@@ -198,7 +203,7 @@ if downloaded:
          port_closes = closes.drop(columns=[bench_ticker])
 
      port_Obj = cPyPortfolio(port_closes)
-     weights = port_Obj.get_weights()
+     weights = port_Obj.get_weightsHRP()
      col1, col2, col3 = st.columns(
          [1, 2, 3],
          gap="small",  # space between columns: "small", "medium", "large"
@@ -236,10 +241,8 @@ if downloaded:
          st.plotly_chart(fig, theme='streamlit', width='stretch')
          # fig.show()
 
-
-
      with col3:
-         display_df = pd.DataFrame(port_Obj.get_portfolo_cumulative_returns())
+         display_df = pd.DataFrame(port_Obj.get_cumulative_returns(weights))
          display_df.columns = ["Portfolio"]
 
          if benchmark == 'None':
@@ -250,29 +253,11 @@ if downloaded:
          #
          format = "{:.4f}"
 
-         evolution, dataframe,  = st.tabs([
-             "Evolution",
-             "Dataframe",
-         ])
+         title="Portfolio & Benchmark"
 
-         with evolution:
-             title="Portfolio & Benchmark"
-             charts(display_df, format, title, format_y_axis_as_pct=False)
+         get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
-         with dataframe:
-             display_df.index = display_df.index.strftime("%Y-%m-%d")
-             st.dataframe(
-                 display_df.style
-                .format(formatter=format, subset=display_df.columns.tolist())
-                #.background_gradient(cmap="RdYlGn")
-                .highlight_max(color="lightgreen")
-                .highlight_min(color="salmon"),
 
-                 width=400,
-                 height=200,
-                 hide_index=False,  # hide the index column
-                 #column_order=display_df.columns.tolist(),  # reorder columns shown
-             )
 
  with test:
      pass
