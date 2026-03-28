@@ -3,7 +3,7 @@ from utils.funcs import *
 from datetime import timedelta,datetime
 
 #import from external API
-from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
+from pjs_qlab.data.yAPI_class import yAPI_class as yAPI
 from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 from pjs_qlab.analytics.cPyPortfolio import PyPortfolio as cPyPortfolio
 
@@ -25,8 +25,9 @@ BENCHMARKS = {
                        show_spinner=True,
                        )
 
-def get_yFinance_obj_from_API(tickers, period, interval):
-    return price_fetcher(tickers, period=period, interval=interval)
+def get_yFinance_obj_from_API(tickers): #, period, interval):
+    yOBJECT=yAPI(tickers)
+    return yOBJECT #.get_HLC(period=period, interval=interval)['Adj Close']
 
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
@@ -92,8 +93,8 @@ with st.sidebar:
             st.session_state["last_refresh"] = datetime.now().strftime("%H:%M:%S")
 
             with st.spinner("Fetching data..."):
-                y_obj = get_yFinance_obj_from_API(tickers, period=period, interval=interval)
-                closes = y_obj.get_close(adjusted=True, freq='d')
+                y_obj = get_yFinance_obj_from_API(tickers)#, period=period, interval=interval)
+                closes = y_obj.get_HLC(period=period, interval=interval)['Adj Close']
                 quant = cQuant(closes)
 
 
