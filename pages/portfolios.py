@@ -254,7 +254,7 @@ if downloaded:
 
          with evolution:
              title="Portfolio & Benchmark"
-             charts(display_df, format, title, format_y_axis_as_pct=False)
+             chartsssss(display_df, format, title, format_y_axis_as_pct=False)
 
          with dataframe:
              display_df.index = display_df.index.strftime("%Y-%m-%d")
