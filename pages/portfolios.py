@@ -1,8 +1,8 @@
-#import pandas as pd
-#import streamlit as st
+
 from utils.funcs import *
 from datetime import timedelta,datetime
-#import from data
+
+#import from external API
 from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
 from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 from pjs_qlab.analytics.cPyPortfolio import PyPortfolio as cPyPortfolio
