@@ -1,7 +1,11 @@
-import pandas as pd
-import streamlit as st
+#import pandas as pd
+#import streamlit as st
 from utils.funcs import *
 from datetime import timedelta,datetime
+#import from data
+from pjs_qlab.data.YahooPriceFetcher import YahooPriceFetcher as price_fetcher
+from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
+from pjs_qlab.analytics.cPyPortfolio import PyPortfolio as cPyPortfolio
 
 
 
@@ -249,30 +253,11 @@ if downloaded:
          #
          format = "{:.4f}"
 
-         #evolution, dataframe,  = st.tabs([
-         #    "Evolution",
-         #    "Dataframe",
-         #])
-
-         #with evolution:
          title="Portfolio & Benchmark"
-             #chartsssss(display_df, format, title, format_y_axis_as_pct=False)
+
          get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
-        # with dataframe:
-        #     display_df.index = display_df.index.strftime("%Y-%m-%d")
-         #    st.dataframe(
-         #        display_df.style
-         #       .format(formatter=format, subset=display_df.columns.tolist())
-         #       #.background_gradient(cmap="RdYlGn")
-         #       .highlight_max(color="lightgreen")
-         #       .highlight_min(color="salmon"),
 
-          #       width=400,
-          #       height=200,
-          #       hide_index=False,  # hide the index column
-          #       #column_order=display_df.columns.tolist(),  # reorder columns shown
-          #   )
 
  with test:
      pass
