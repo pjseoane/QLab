@@ -1,6 +1,6 @@
-1- Create a Python 3.12 virtual environment to match `pjs_qlab`:
+1- Create a Python 3.13.3 virtual environment to match `pjs_qlab`:
 ```powershell
-py -3.12 -m venv .venv
+py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 pip install -r requirements.txt
@@ -35,7 +35,7 @@ An interactive stock analysis and comparison dashboard built with Streamlit, yfi
 ## Quick Start
 
 ```bash
-# 1. Install dependencies in the Python 3.12 virtualenv
+# 1. Install dependencies in the Python 3.13.3 virtualenv
 pip install -r requirements.txt
 
 # 2. Run the app
