@@ -1,9 +1,16 @@
-1- Create a Python 3.13.3 virtual environment to match `pjs_qlab`:
+1- Create a Python 3.13 virtual environment to match `pjs_qlab`:
 ```powershell
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
+# Confirm GitHub SSH access before installing the dependency from Git:
+ssh -T git@github.com
 pip install -r requirements.txt
+```
+
+If SSH is not configured on this machine, `pip install -r requirements.txt` will fail on the `pjs_qlab` dependency. In that case, either configure GitHub SSH access or replace the Git dependency with a local editable path:
+```text
+-e ../pjs_qlab
 ```
 
 
@@ -35,7 +42,8 @@ An interactive stock analysis and comparison dashboard built with Streamlit, yfi
 ## Quick Start
 
 ```bash
-# 1. Install dependencies in the Python 3.13.3 virtualenv
+# 1. Install dependencies in the Python 3.13 virtualenv
+ssh -T git@github.com
 pip install -r requirements.txt
 
 # 2. Run the app

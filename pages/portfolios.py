@@ -9,6 +9,8 @@ from pjs_qlab.analytics.cPyPortfolio import PyPortfolio as cPyPortfolio
 
 
 
+
+
 st.set_page_config(page_title="Portfolio", layout="wide")
 st.title("📁 Portfolio Analysis")
 

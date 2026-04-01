@@ -1,4 +1,4 @@
-# Use Python 3.13.3 to align with the sibling pjs_qlab project environment.
+# Use Python 3.13 to align with the sibling pjs_qlab project environment.
 streamlit>=1.37.1
 numpy>=1.26
 pandas>=2.2
@@ -12,5 +12,8 @@ PyPortfolioOpt>=1.5
 ipykernel>=6.29
 nbformat>=5.10
 
-# -e ../pjs_qlab con esta instruccion carga de la copia en esta maquina
+# Install from GitHub over SSH. This requires a local SSH key with access to
+# git@github.com:pjseoane/pjs_qlab.git.
+# Local development alternative:
+# -e ../pjs_qlab
 git+ssh://git@github.com/pjseoane/pjs_qlab.git
