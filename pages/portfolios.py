@@ -2,7 +2,6 @@
 from utils.funcs import *
 from datetime import timedelta,datetime
 
-#import from external API
 from pjs_qlab.data.yAPI_class import yAPI_class as yAPI
 from pjs_qlab.analytics.cQuantClass import cQuantClass as cQuant
 from pjs_qlab.analytics.cPyPortfolio import PyPortfolio as cPyPortfolio
@@ -111,7 +110,7 @@ with st.sidebar:
 if downloaded:
  returns, rebase, drop_rise, hist_vlt, ratios, pyPortfolio, test  = st.tabs([
     "Price & Returns",
-    "Rebase",
+    "Rebase & Correlations",
     "Drop & Rises",
     "Volatility",
     "Ratios",
@@ -156,6 +155,12 @@ if downloaded:
      format = "{:.2f}"
      format_y_axis_as_pct = False
      get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
+
+     display_df=quant.get_log_returns_corr_matrix()
+     title='Correlation'
+     tickformat = '.1f'
+     plot_heat_map(display_df, title, tickformat,width=600, height=600)
+
 
  with drop_rise:
     display_df = quant.get_largest_pct_drop(days)
