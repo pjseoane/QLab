@@ -20,9 +20,16 @@ def load_portfolios (fileCSV) -> dict:
             "weights": dict(zip(group['Ticker'], group['Wgt']))
         }
     return output
+def plot_risk_box(display_df, title, tickformat):
+    fig = cPlot.plot_risk_box(display_df, title, tickformat)
+    st.plotly_chart(fig, theme='streamlit', width='stretch')
 
 def plot_heat_map(display_df, title, tickformat,width, height):
     fig=cPlot.plot_returns_corr_heatmap(display_df, title, tickformat,width, height)
+    st.plotly_chart(fig, theme='streamlit', width='stretch')
+
+def plot_density_daily_returns(display_df, title, tickformat):
+    fig=cPlot.plotDensityDailyReturns(display_df, title, tickformat)
     st.plotly_chart(fig, theme='streamlit', width='stretch')
 
 

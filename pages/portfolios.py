@@ -1,3 +1,4 @@
+from pjs_qlab.analytics.plot_functions import plot_risk_box
 
 from utils.funcs import *
 from datetime import timedelta,datetime
@@ -99,6 +100,7 @@ with st.sidebar:
                 quant = cQuant(closes)
 
 
+
                 downloaded = True
                 #st.rerun()
 
@@ -108,22 +110,23 @@ with st.sidebar:
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
 if downloaded:
- returns, rebase, drop_rise, hist_vlt, ratios, pyPortfolio, test  = st.tabs([
-    "Price & Returns",
-    "Rebase & Correlations",
-    "Drop & Rises",
-    "Volatility",
+ returns, corr, risk, ratios, pyPortfolio  = st.tabs([
+    "Returns",
+    "Correlations",
+    "Risk",
     "Ratios",
     "pyPortfolio",
-    "test",
+
 ])
 
  with returns:
 
+     display_df = quant.get_rebase('d')
+     title = 'Rebase'
+     format = "{:.2f}"
+     format_y_axis_as_pct = False
+     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
-
-
- # with c_returns:
      display_df = quant.get_cum_returns('d')
      title = 'Cumulative Returns'
      format = "{:.2%}"
@@ -136,12 +139,17 @@ if downloaded:
      format_y_axis_as_pct = True
      get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
- #with log_returns:
      display_df = quant.get_log_returns('d')
      title = 'Log Returns'
      format = "{:.2%}"
      format_y_axis_as_pct = True
      get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
+
+     display_df = quant.get_log_returns(interval)
+     title = 'Density Daily Returns'
+     format = "{:.2%}"
+     format_y_axis_as_pct = False
+     plot_density_daily_returns( display_df, title, format)
 
      display_df = quant.get_close(interval)
      title = 'Closes'
@@ -149,20 +157,16 @@ if downloaded:
      format_y_axis_as_pct = False
      get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
- with rebase:
-     display_df = quant.get_rebase('d')
-     title='Rebase'
-     format = "{:.2f}"
-     format_y_axis_as_pct = False
-     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
+
+ with corr:
      display_df=quant.get_log_returns_corr_matrix()
      title='Correlation'
      tickformat = '.1f'
      plot_heat_map(display_df, title, tickformat,width=600, height=600)
 
 
- with drop_rise:
+ with risk:
     display_df = quant.get_largest_pct_drop(days)
     title = 'Largest Pct Drop'
     format = "{:.2%}"
@@ -176,12 +180,17 @@ if downloaded:
     format_y_axis_as_pct = True
     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
 
- with hist_vlt:
-     display_df = quant.get_hist_vlt_series(days)
-     title = 'Volatility'
-     format = "{:.2%}"
-     format_y_axis_as_pct = True
-     get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
+    display_df = quant.get_hist_vlt_series(days)
+    title = 'Volatility'
+    format = "{:.2%}"
+    format_y_axis_as_pct = True
+    get_tab_chart2(quant, display_df, title, format, format_y_axis_as_pct)
+
+    display_df = quant.get_log_returns(interval)
+    title = 'Risk Box'
+    format = "{:.2%}"
+    format_y_axis_as_pct = True
+    plot_risk_box(display_df, title, format)
 
  with ratios:
      display_df = quant.get_zScore_series(days)
@@ -267,8 +276,6 @@ if downloaded:
 
 
 
- with test:
-     pass
 
 
 
