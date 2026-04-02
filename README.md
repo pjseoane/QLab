@@ -2,6 +2,7 @@
 ```powershell
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
+python --version  # should print Python 3.13.12
 python -m pip install --upgrade pip
 # Confirm GitHub SSH access before installing the dependency from Git:
 ssh -T git@github.com

@@ -1,4 +1,4 @@
-# Use Python 3.13 to align with the sibling pjs_qlab project environment.
+# Use Python 3.13.12 to align with the sibling pjs_qlab project environment.
 streamlit>=1.37.1
 numpy>=1.26
 pandas>=2.2
